@@ -47,6 +47,56 @@ export async function apiPost<Req extends z.ZodType, Res extends z.ZodType>(
   }
 
   const json = await res.json();
-
   return resSchema.parse(json);
+}
+
+export async function apiPut<Req extends z.ZodType, Res extends z.ZodType>(
+  url: string,
+  reqSchema: Req,
+  resSchema: Res,
+  body: z.infer<Req>,
+): Promise<z.infer<Res>> {
+  // Validate requests
+  const validBody = reqSchema.parse(body);
+
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(validBody),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP error ${res.status}`);
+  }
+
+  const json = await res.json();
+  return resSchema.parse(json);
+}
+
+export async function apiDelete(url: string): Promise<void> {
+  const res = await fetch(url, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP error ${res.status}`);
+  }
+}
+
+export async function apiDeleteResponse<S extends z.ZodType>(
+  url: string,
+  schema: S,
+): Promise<z.infer<S>> {
+  const res = await fetch(url, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP error ${res.status}`);
+  }
+
+  const json = await res.json();
+  return schema.parse(json);
 }

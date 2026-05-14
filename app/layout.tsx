@@ -28,15 +28,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
-      <footer className=" w-full ">
-        <Link
-          href={"/"}
-          className=" border-2 rounded-xl p-3 hover:bg-amber-800 mt-3 "
-        >
-          Fuck go back
-        </Link>
-      </footer>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <div className=" w-full ">
+          <Link
+            href={"/"}
+            className=" border-2 rounded-xl p-3 hover:bg-amber-800 mt-3 "
+          >
+            Fuck go back
+          </Link>
+        </div>
+      </body>
     </html>
   );
 }

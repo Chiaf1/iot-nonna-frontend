@@ -1,4 +1,3 @@
-import { DeviceType } from "@/schemas/device_type.schema";
 import { getDevices } from "@/services/device";
 
 export default async function Dashboard() {

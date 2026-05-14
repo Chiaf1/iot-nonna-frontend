@@ -100,3 +100,23 @@ export async function apiDeleteResponse<S extends z.ZodType>(
   const json = await res.json();
   return schema.parse(json);
 }
+
+export async function apiPostNoContent<Req extends z.ZodType>(
+  url: string,
+  reqSchema: Req,
+  body: z.infer<Req>,
+): Promise<void> {
+  const validBody = reqSchema.parse(body);
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(validBody),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP error ${res.status}`);
+  }
+}

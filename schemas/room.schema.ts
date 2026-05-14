@@ -8,5 +8,7 @@ export const RoomSchema = RoomRequestSchema.extend({
   id: z.string(),
 });
 
+export const RoomListSchema = z.array(RoomSchema);
+
 export type RoomRequest = z.infer<typeof RoomRequestSchema>;
 export type Room = z.infer<typeof RoomSchema>;

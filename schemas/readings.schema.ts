@@ -12,9 +12,13 @@ export const DhtReadingsSchema = BaseReadingsSchema.extend({
   humidity: z.number().optional().nullable(),
 });
 
+export const DhtReadingsListSchema = z.array(DhtReadingsSchema);
+
 export const StatusReadingsSchema = BaseReadingsSchema.extend({
   status: z.boolean(),
 });
+
+export const StatusReadingsListSchema = z.array(StatusReadingsSchema);
 
 export type DhtReadings = z.infer<typeof DhtReadingsSchema>;
 export type StatusReadings = z.infer<typeof StatusReadingsSchema>;

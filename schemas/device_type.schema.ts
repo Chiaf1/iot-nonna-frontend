@@ -10,5 +10,7 @@ export const DeviceTypeSchema = DeviceTypeRequestSchema.extend({
   id: z.string(),
 });
 
+export const DeviceTypeListSchema = z.array(DeviceTypeSchema);
+
 export type DeviceTypeRequest = z.infer<typeof DeviceTypeRequestSchema>;
 export type DeviceType = z.infer<typeof DeviceTypeSchema>;

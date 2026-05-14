@@ -1,23 +1,10 @@
-import { appConfig } from "@/lib/appConfig";
 import { NextResponse } from "next/server";
+import { getDevices } from "@/services/device";
 
 export async function GET() {
   try {
-    const response = await fetch(`${appConfig.api.url}/devices`);
-
-    // 1. Controlla se la risposta è valida (status 200-299)
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: `Errore API: ${response.statusText}` },
-        { status: response.status },
-      );
-    }
-
-    // 2. Estrai i dati JSON dalla risposta
-    const data = await response.json();
-
-    // 3. Restituisci i dati estratti
-    return NextResponse.json(data);
+    const response = await getDevices();
+    return NextResponse.json(response);
   } catch (error) {
     // Gestisce errori di rete (es. server spento)
     console.error("Errore durante la fetch:", error);

@@ -1,4 +1,7 @@
 import { getDevice } from "@/services/device";
+import { getRooms } from "@/services/room";
+import { getDeviceSensors } from "@/services/sensors";
+import { notFound } from "next/navigation";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -6,24 +9,33 @@ type RouteParams = {
 
 export default async function DevicesById({ params }: RouteParams) {
   const { id } = await params;
-  // 1. Raccatta i dati lato server non serve fare fetch
-  const device = await getDevice(id);
+
+  // Fetch parallelo non in sequenza, le tre chiamate partono insieme
+  // se mettevo le 3 chiamate singole le avrebbe eseguite in sequenza
+  const [device, sensors, rooms] = await Promise.all([
+    getDevice(id),
+    getDeviceSensors(id),
+    getRooms(),
+  ]);
+
+  if (!device) notFound();
 
   return (
     <main className=" p-20 ">
-      <h1>Device page</h1>
-      <div>
-        <h2>Devices:</h2>
-        {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
-        {
-          <div key={device.id}>
-            <h3>Device ID: {device.id}</h3>
-            <pre>{JSON.stringify(device, null, 2)}</pre>
-          </div>
-        }
-        {/* se non trova nessun dispositivo */}
-        {device === null && <p>Nessun dispositivo trovato</p>}
-      </div>
+      <h1>Device: {device.code}</h1>
+      <pre>{JSON.stringify(device, null, 2)}</pre>
+
+      <h2>Sensori collegati {sensors.length}</h2>
+      {sensors.map((sensor) => (
+        <div key={sensor.id}>
+          <pre>{JSON.stringify(sensor, null, 2)}</pre>
+        </div>
+      ))}
+
+      <h3>Rooms disponibili</h3>
+      {rooms.map((room) => (
+        <div key={room.id}>{room.name}</div>
+      ))}
     </main>
   );
 }

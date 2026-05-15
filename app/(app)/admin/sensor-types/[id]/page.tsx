@@ -1,4 +1,5 @@
 import { getSensorType } from "@/services/sensor_type";
+import { notFound } from "next/navigation";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -8,6 +9,8 @@ export default async function SensorTypesById({ params }: RouteParams) {
   const { id } = await params;
   // 1. Raccatta i dati lato server non serve fare fetch
   const st = await getSensorType(id);
+
+  if (!st) notFound();
 
   return (
     <main className=" p-20 ">

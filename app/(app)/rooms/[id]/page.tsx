@@ -1,4 +1,5 @@
 import { getRoom } from "@/services/room";
+import { notFound } from "next/navigation";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -8,6 +9,8 @@ export default async function RoomsById({ params }: RouteParams) {
   const { id } = await params;
   // 1. Raccatta i dati lato server non serve fare fetch
   const room = await getRoom(id);
+
+  if (!room) notFound();
 
   return (
     <main className=" p-20 ">
@@ -21,8 +24,6 @@ export default async function RoomsById({ params }: RouteParams) {
             <pre>{JSON.stringify(room, null, 2)}</pre>
           </div>
         }
-        {/* se non trova nessun dispositivo */}
-        {room === null && <p>Nessun dispositivo trovato</p>}
       </div>
     </main>
   );

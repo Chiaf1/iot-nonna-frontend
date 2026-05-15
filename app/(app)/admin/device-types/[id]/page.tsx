@@ -1,4 +1,5 @@
 import { getDeviceType } from "@/services/device_type";
+import { notFound } from "next/navigation";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -8,6 +9,8 @@ export default async function DeviceTypesById({ params }: RouteParams) {
   const { id } = await params;
   // 1. Raccatta i dati lato server non serve fare fetch
   const dt = await getDeviceType(id);
+
+  if (!dt) notFound();
 
   return (
     <main className=" p-20 ">

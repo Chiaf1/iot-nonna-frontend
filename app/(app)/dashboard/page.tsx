@@ -1,4 +1,5 @@
 import { getDevices } from "@/services/device";
+import { Device } from "@/schemas/device.schema";
 
 export default async function Dashboard() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -10,7 +11,7 @@ export default async function Dashboard() {
       <div>
         <h2>Devices:</h2>
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
-        {devices.map((device: any) => (
+        {devices.map((device: Device) => (
           <div key={device.id}>
             <h3>Device ID: {device.id}</h3>
             <pre>{JSON.stringify(device, null, 2)}</pre>

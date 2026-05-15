@@ -4,14 +4,14 @@ type RouteParams = {
   params: Promise<{ id: string }>;
 };
 
-export default async function Dashboard({ params }: RouteParams) {
+export default async function DevicesById({ params }: RouteParams) {
   const { id } = await params;
   // 1. Raccatta i dati lato server non serve fare fetch
   const device = await getDevice(id);
 
   return (
     <main className=" p-20 ">
-      <h1>Dashboard page</h1>
+      <h1>Device page</h1>
       <div>
         <h2>Devices:</h2>
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}

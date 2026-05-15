@@ -1,0 +1,29 @@
+import { getDeviceType } from "@/services/device_type";
+
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function DeviceTypesById({ params }: RouteParams) {
+  const { id } = await params;
+  // 1. Raccatta i dati lato server non serve fare fetch
+  const dt = await getDeviceType(id);
+
+  return (
+    <main className=" p-20 ">
+      <h1>Device-type page</h1>
+      <div>
+        <h2>Device-type:</h2>
+        {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
+        {
+          <div key={dt.id}>
+            <h3>Device-type ID: {dt.id}</h3>
+            <pre>{JSON.stringify(dt, null, 2)}</pre>
+          </div>
+        }
+        {/* se non trova nessun dispositivo */}
+        {dt === null && <p>Nessun device-type trovato</p>}
+      </div>
+    </main>
+  );
+}

@@ -1,0 +1,29 @@
+import { getRoom } from "@/services/room";
+
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function RoomsById({ params }: RouteParams) {
+  const { id } = await params;
+  // 1. Raccatta i dati lato server non serve fare fetch
+  const room = await getRoom(id);
+
+  return (
+    <main className=" p-20 ">
+      <h1>Room page</h1>
+      <div>
+        <h2>Room:</h2>
+        {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
+        {
+          <div key={room.id}>
+            <h3>Device ID: {room.id}</h3>
+            <pre>{JSON.stringify(room, null, 2)}</pre>
+          </div>
+        }
+        {/* se non trova nessun dispositivo */}
+        {room === null && <p>Nessun dispositivo trovato</p>}
+      </div>
+    </main>
+  );
+}

@@ -1,7 +1,8 @@
 import { Room } from "@/schemas/room.schema";
 import { getRooms } from "@/services/room";
+import Link from "next/link";
 
-export default async function Dashboard() {
+export default async function Rooms() {
   // 1. Raccatta i dati lato server non serve fare fetch
   const rooms = await getRooms();
 
@@ -13,7 +14,9 @@ export default async function Dashboard() {
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
         {rooms.map((room: Room) => (
           <div key={room.id}>
-            <h3>Room ID: {room.id}</h3>
+            <Link className="hover:text-blue-500" href={`/rooms/${room.id}`}>
+              Room ID: {room.id}
+            </Link>
             <pre>{JSON.stringify(room, null, 2)}</pre>
           </div>
         ))}

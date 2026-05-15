@@ -1,8 +1,8 @@
 import { SensorType } from "@/schemas/sensor_type.schema";
-import { getDeviceTypes } from "@/services/device_type";
 import { getSensorTypes } from "@/services/sensor_type";
+import Link from "next/link";
 
-export default async function Dashboard() {
+export default async function SensorTypes() {
   // 1. Raccatta i dati lato server non serve fare fetch
   const sensorTypes = await getSensorTypes();
 
@@ -14,7 +14,12 @@ export default async function Dashboard() {
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
         {sensorTypes.map((st: SensorType) => (
           <div key={st.id}>
-            <h3>Sensor Type ID: {st.id}</h3>
+            <Link
+              className="hover:text-blue-500"
+              href={`/admin/sensor-types/${st.id}`}
+            >
+              Sensor-type ID: {st.id}
+            </Link>
             <pre>{JSON.stringify(st, null, 2)}</pre>
           </div>
         ))}

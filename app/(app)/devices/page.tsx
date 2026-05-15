@@ -1,7 +1,8 @@
 import { getDevices } from "@/services/device";
 import { Device } from "@/schemas/device.schema";
+import Link from "next/link";
 
-export default async function Dashboard() {
+export default async function Devices() {
   // 1. Raccatta i dati lato server non serve fare fetch
   const devices = await getDevices();
 
@@ -13,7 +14,12 @@ export default async function Dashboard() {
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
         {devices.map((device: Device) => (
           <div key={device.id}>
-            <h3>Device ID: {device.id}</h3>
+            <Link
+              className="hover:text-blue-500"
+              href={`/devices/${device.id}`}
+            >
+              Device ID: {device.id}
+            </Link>
             <pre>{JSON.stringify(device, null, 2)}</pre>
           </div>
         ))}

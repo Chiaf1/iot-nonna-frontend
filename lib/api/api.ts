@@ -43,7 +43,7 @@ export async function apiPost<Req extends z.ZodType, Res extends z.ZodType>(
   });
 
   if (!res.ok) {
-    throw new Error(`HTTP error ${res.status}`);
+    handleErrorResponse(res);
   }
 
   const json = await res.json();
@@ -68,7 +68,7 @@ export async function apiPut<Req extends z.ZodType, Res extends z.ZodType>(
   });
 
   if (!res.ok) {
-    throw new Error(`HTTP error ${res.status}`);
+    handleErrorResponse(res);
   }
 
   const json = await res.json();
@@ -119,4 +119,28 @@ export async function apiPostNoContent<Req extends z.ZodType>(
   if (!res.ok) {
     throw new Error(`HTTP error ${res.status}`);
   }
+}
+
+// Better error handling for put and post since the backend api uses structured errors
+export type ApiError = {
+  status: number;
+  message: string;
+  errors?: Record<string, string>;
+};
+
+async function handleErrorResponse(response: Response): Promise<never> {
+  let errors: Record<string, string> | undefined;
+
+  try {
+    const body = await response.json();
+    errors = body.errors;
+  } catch {
+    // il body non era json skippa
+  }
+
+  const err = new Error(`HTTP error ${response.status}`) as Error & {
+    apiError: ApiError;
+  };
+  err.apiError = { status: response.status, message: err.message, errors };
+  throw err;
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { createRoomAction, FormState } from "@/app/(app)/rooms/actions";
+import { createRoomAction } from "@/app/(app)/rooms/actions";
+import { FormState } from "@/types/forms";
 import { useActionState } from "react";
 
 const initialState: FormState = {};

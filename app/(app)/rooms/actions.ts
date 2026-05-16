@@ -4,12 +4,7 @@ import { RoomRequestSchema } from "@/schemas/room.schema";
 import { createRoom } from "@/services/room";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-
-// Stato che la action può ritornare al componente
-export type FormState = {
-  errors?: Record<string, string[]>;
-  message?: string;
-};
+import { FormState } from "@/types/forms";
 
 // Le server action usato con useActionState devono avere questa firma:
 // (prevState: State, ...args) => Promise<State>

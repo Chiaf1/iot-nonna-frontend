@@ -1,3 +1,4 @@
+import { CreateDeviceTypeForm } from "@/components/device_type/CreateDeviceTypeForm";
 import { DeviceType } from "@/schemas/device_type.schema";
 import { getDeviceTypes } from "@/services/device_type";
 import Link from "next/link";
@@ -26,6 +27,7 @@ export default async function DeviceTypes() {
         {/* se non trova nessun dispositivo */}
         {deviceTypes.length === 0 && <p>Nessun dispositivo trovato</p>}
       </div>
+      <CreateDeviceTypeForm />
     </main>
   );
 }

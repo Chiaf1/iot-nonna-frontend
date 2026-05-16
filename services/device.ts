@@ -20,4 +20,4 @@ export const createDevice = (data: DeviceRequest) =>
 export const updateDevice = (id: string, data: DeviceRequest) =>
   apiPut(`${baseURL}/${id}`, DeviceRequestSchema, DeviceSchema, data);
 
-export const delteDevice = (id: string) => apiDelete(`${baseURL}/${id}`);
+export const deleteDevice = (id: string) => apiDelete(`${baseURL}/${id}`);

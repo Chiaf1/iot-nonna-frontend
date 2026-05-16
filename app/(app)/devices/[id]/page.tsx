@@ -8,7 +8,7 @@ import { getRooms } from "@/services/room";
 import { getSensorTypes } from "@/services/sensor_type";
 import { getDeviceSensors } from "@/services/sensors";
 import { notFound } from "next/navigation";
-import { removeSensorAction } from "./actions";
+import { deleteDeviceAction, removeSensorAction } from "./actions";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -49,7 +49,11 @@ export default async function DevicesById({ params }: RouteParams) {
       <p>Tipo: {device.device_type.code}</p>
       <p>Stanza: {device.room?.name ?? "Nessuna stanza"}</p>
       <pre>{JSON.stringify(device, null, 2)}</pre>
-
+      {/* Elimina device */}
+      <DeleteButton
+        action={deleteDeviceAction.bind(null, id)}
+        label="Elimina Device"
+      />
       {/* Ultima lettura DHT */}
       <h2>Dati ultima lettura</h2>
       {latestDht ? (
@@ -70,7 +74,7 @@ export default async function DevicesById({ params }: RouteParams) {
             {sensor.code} - {sensor.description}
           </p>
           <DeleteButton
-            action={() => removeSensorAction(id, sensor.id)}
+            action={removeSensorAction.bind(null, id, sensor.id)}
             label="Rimuovi Sensore"
           />
         </div>

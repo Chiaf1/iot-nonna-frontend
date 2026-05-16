@@ -19,4 +19,4 @@ export const createRoom = (data: RoomRequest) =>
 export const updateRoom = (id: string, data: RoomRequest) =>
   apiPut(`${baseURL}/${id}`, RoomRequestSchema, RoomSchema, data);
 
-export const delteRoom = (id: string) => apiDelete(`${baseURL}/${id}`);
+export const deleteRoom = (id: string) => apiDelete(`${baseURL}/${id}`);

@@ -1,5 +1,7 @@
+import { DeleteButton } from "@/components/ui_personal/DeleteButton";
 import { getDeviceType } from "@/services/device_type";
 import { notFound } from "next/navigation";
+import { deleteDeviceTypeAction } from "./actions";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -18,14 +20,14 @@ export default async function DeviceTypesById({ params }: RouteParams) {
       <div>
         <h2>Device-type:</h2>
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
-        {
-          <div key={dt.id}>
-            <h3>Device-type ID: {dt.id}</h3>
-            <pre>{JSON.stringify(dt, null, 2)}</pre>
-          </div>
-        }
-        {/* se non trova nessun dispositivo */}
-        {dt === null && <p>Nessun device-type trovato</p>}
+        <div key={dt.id}>
+          <h3>Device-type ID: {dt.id}</h3>
+          <pre>{JSON.stringify(dt, null, 2)}</pre>
+        </div>
+        <DeleteButton
+          action={deleteDeviceTypeAction.bind(null, id)}
+          label="Elimina Device-type"
+        />
       </div>
     </main>
   );

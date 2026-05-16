@@ -20,4 +20,4 @@ export const createSensorType = (data: SensorTypeRequest) =>
 export const updateSensorType = (id: string, data: SensorTypeRequest) =>
   apiPut(`${baseURL}/${id}`, SensorTypeRequestSchema, SensorTypeSchema, data);
 
-export const delteSensorType = (id: string) => apiDelete(`${baseURL}/${id}`);
+export const deleteSensorType = (id: string) => apiDelete(`${baseURL}/${id}`);

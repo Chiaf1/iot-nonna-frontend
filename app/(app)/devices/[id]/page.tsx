@@ -1,3 +1,4 @@
+import { DeleteButton } from "@/components/ui_personal/DeleteButton";
 import { getDevice } from "@/services/device";
 import {
   getReadingsLatestDht,
@@ -7,6 +8,7 @@ import { getRooms } from "@/services/room";
 import { getSensorTypes } from "@/services/sensor_type";
 import { getDeviceSensors } from "@/services/sensors";
 import { notFound } from "next/navigation";
+import { removeSensorAction } from "./actions";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -23,7 +25,7 @@ export default async function DevicesById({ params }: RouteParams) {
   // che un dispositivo nuovo non abbia letture quindi un errore (404) legittimo
   const [sensors, rooms, sensorTypes, latestDht, latestStatus] =
     await Promise.all([
-      getDeviceSensors(id),
+      getDeviceSensors(id).catch(() => null),
       getRooms(),
       getSensorTypes(),
       getReadingsLatestDht(id).catch(() => null),
@@ -62,13 +64,17 @@ export default async function DevicesById({ params }: RouteParams) {
 
       {/* Sensori collegati */}
       <h2>Sensori collegati</h2>
-      {sensors.map((sensor) => (
+      {sensors?.map((sensor) => (
         <div key={sensor.id}>
           <p>
             {sensor.code} - {sensor.description}
           </p>
+          <DeleteButton
+            action={() => removeSensorAction(id, sensor.id)}
+            label="Rimuovi Sensore"
+          />
         </div>
-      ))}
+      )) ?? <p>Nessun sensore collegato</p>}
 
       {/* Sensor types disponibili */}
       <h2>Sensor types disponibili {sensorTypes.length}</h2>

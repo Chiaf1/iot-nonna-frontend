@@ -1,3 +1,4 @@
+import { CreateRoomForm } from "@/components/rooms/CreateRoomForm";
 import { Room } from "@/schemas/room.schema";
 import { getRooms } from "@/services/room";
 import Link from "next/link";
@@ -23,6 +24,7 @@ export default async function Rooms() {
         {/* se non trova nessun dispositivo */}
         {rooms.length === 0 && <p>Nessun dispositivo trovato</p>}
       </div>
+      <CreateRoomForm />
     </main>
   );
 }

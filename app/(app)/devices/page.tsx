@@ -1,10 +1,17 @@
 import { getDevices } from "@/services/device";
 import { Device } from "@/schemas/device.schema";
 import Link from "next/link";
+import { CreateDeviceForm } from "@/components/devices/CreateDeviceForm";
+import { getRooms } from "@/services/room";
+import { getDeviceTypes } from "@/services/device_type";
 
 export default async function Devices() {
   // 1. Raccatta i dati lato server non serve fare fetch
-  const devices = await getDevices();
+  const [devices, deviceTypes, rooms] = await Promise.all([
+    getDevices(),
+    getDeviceTypes(),
+    getRooms(),
+  ]);
 
   return (
     <main className=" p-20 ">
@@ -26,6 +33,7 @@ export default async function Devices() {
         {/* se non trova nessun dispositivo */}
         {devices.length === 0 && <p>Nessun dispositivo trovato</p>}
       </div>
+      <CreateDeviceForm deviceTypes={deviceTypes} rooms={rooms} />
     </main>
   );
 }

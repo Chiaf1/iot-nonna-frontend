@@ -28,5 +28,5 @@ export async function createDeviceTypeAction(
 
   await createDeviceType(result.data);
   revalidatePath("/device-types");
-  return { message: "Stanza creata con successo" };
+  return { message: "Device type creato con successo" };
 }

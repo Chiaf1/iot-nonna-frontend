@@ -1,7 +1,15 @@
 // niente "use client" perché questo é un server component
 import Link from "next/link";
 import { NavLink } from "./NavLink";
-import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "./ThemeToggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -18,39 +26,49 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-14 items-center gap-6">
-          {/* Logo / nome app */}
+        <div className="flex h-14 items-center justify-between">
+          {/* sinsitra - Logo / nome app */}
           <Link
             href="/dashboard"
             className="font-semibold text-foreground shrink-0"
           >
             Iot Nonna
           </Link>
+          {/*destra - Navigazione principale e admin*/}
+          <div className="flex items-center gap-6">
+            {/* Navigazione principale */}
+            <nav className="flex items-center gap-1">
+              {navItems.map((item) => (
+                <NavLink key={item.href} href={item.href}>
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
 
-          <Separator orientation="vertical" className="h-5" />
+            {/* Drop down menu admin */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1 text-muted-foreground"
+                >
+                  Admin
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {adminItems.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* Navigazione principale */}
-          <nav className="flex items-center gap-1">
-            {navItems.map((item) => (
-              <NavLink key={item.href} href={item.href}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          <Separator orientation="vertical" className="h-5" />
-
-          {/* Sezione admin con label */}
-          <nav className="flex items-center gap-1">
-            <span className="text-xs text-muted-foreground mr-1 shrink-0">
-              Admin
-            </span>
-            {adminItems.map((item) => (
-              <NavLink key={item.href} href={item.href}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+            <div className="mx-2 h-4 w-px bg-border" />
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>

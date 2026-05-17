@@ -2,6 +2,7 @@ import { DeleteButton } from "@/components/ui_personal/DeleteButton";
 import { getRoom } from "@/services/room";
 import { notFound } from "next/navigation";
 import { deleteRoomAction } from "./actions";
+import { EditRoomForm } from "@/components/rooms/EditRoomForm";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -31,6 +32,8 @@ export default async function RoomsById({ params }: RouteParams) {
           label="Elimina stanza"
         />
       </div>
+      <h2>Modifica Stanza</h2>
+      <EditRoomForm room={room} />
     </main>
   );
 }

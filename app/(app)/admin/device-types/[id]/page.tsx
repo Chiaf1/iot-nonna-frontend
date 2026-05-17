@@ -2,6 +2,7 @@ import { DeleteButton } from "@/components/ui_personal/DeleteButton";
 import { getDeviceType } from "@/services/device_type";
 import { notFound } from "next/navigation";
 import { deleteDeviceTypeAction } from "./actions";
+import { EditDeviceTypeForm } from "@/components/device_type/EditDeviceTypeForm";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -29,6 +30,8 @@ export default async function DeviceTypesById({ params }: RouteParams) {
           label="Elimina Device-type"
         />
       </div>
+      <h2>Modifica Device Type</h2>
+      <EditDeviceTypeForm deviceType={dt} />
     </main>
   );
 }

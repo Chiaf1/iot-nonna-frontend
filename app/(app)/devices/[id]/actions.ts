@@ -4,12 +4,13 @@
 "use server";
 
 import { deleteDeviceSensor, postDeviceSensor } from "@/services/sensors";
-import { deleteDevice } from "@/services/device";
+import { deleteDevice, updateDevice } from "@/services/device";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { FormState } from "@/types/forms";
 import { z } from "zod";
 import { AssociateSensorRequestSchema } from "@/schemas/sensors_devices.schema";
+import { DeviceRequestSchema } from "@/schemas/device.schema";
 
 export async function removeSensorAction(deviceId: string, sensorId: string) {
   await deleteDeviceSensor(deviceId, sensorId);
@@ -36,4 +37,25 @@ export async function addSensorToDeviceAction(
   await postDeviceSensor(deviceId, result.data);
   revalidatePath(`/devices/${deviceId}`);
   return { message: "Sensore aggiunto con successo" };
+}
+
+export async function updateDeviceAction(
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const deviceId = formData.get("device_id")?.toString() ?? "";
+  const raw = {
+    code: formData.get("code")?.toString() ?? "",
+    device_type_id: formData.get("device_type_id")?.toString() ?? "",
+    room_id: formData.get("room_id")?.toString() || undefined,
+  };
+  const result = DeviceRequestSchema.safeParse(raw);
+  if (!result.success) {
+    return {
+      errors: z.flattenError(result.error).fieldErrors,
+    };
+  }
+  await updateDevice(deviceId, result.data);
+  revalidatePath(`/devices/${deviceId}`);
+  return { message: "Device modificato con successo" };
 }

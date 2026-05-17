@@ -10,6 +10,8 @@ import { getDeviceSensors } from "@/services/sensors";
 import { notFound } from "next/navigation";
 import { deleteDeviceAction, removeSensorAction } from "./actions";
 import { AddSensorToDeviceForm } from "@/components/devices/AddSensorToDeviceForm";
+import { getDeviceTypes } from "@/services/device_type";
+import { EditDeviceForm } from "@/components/devices/EditDeviceForm";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -24,14 +26,21 @@ export default async function DevicesById({ params }: RouteParams) {
   // Fetch parallelo non in sequenza, le varie chiamate partono insieme invece che in sequenza
   // ho dovuto aggiungere .catch(() => null) a latestDht e status perché é possibile
   // che un dispositivo nuovo non abbia letture quindi un errore (404) legittimo
-  const [deviceSensors, rooms, allSensors, latestDht, latestStatus] =
-    await Promise.all([
-      getDeviceSensors(id).catch(() => null),
-      getRooms(),
-      getSensorTypes(),
-      getReadingsLatestDht(id).catch(() => null),
-      getReadingsLatestStatus(id).catch(() => null),
-    ]);
+  const [
+    deviceSensors,
+    rooms,
+    allSensors,
+    latestDht,
+    latestStatus,
+    deviceTypes,
+  ] = await Promise.all([
+    getDeviceSensors(id).catch(() => null),
+    getRooms(),
+    getSensorTypes(),
+    getReadingsLatestDht(id).catch(() => null),
+    getReadingsLatestStatus(id).catch(() => null),
+    getDeviceTypes(),
+  ]);
 
   const availableSensors = allSensors?.filter(
     (as) => !deviceSensors?.some((ds) => ds.id === as.id),
@@ -96,11 +105,8 @@ export default async function DevicesById({ params }: RouteParams) {
         <p>Nessun sensore da poter aggiungere</p>
       )}
 
-      {/* Rooms disponibili  */}
-      <h2>Rooms disponibili</h2>
-      {rooms.map((room) => (
-        <div key={room.id}>{room.name}</div>
-      ))}
+      <h2>Modifica device</h2>
+      <EditDeviceForm device={device} deviceTypes={deviceTypes} rooms={rooms} />
     </main>
   );
 }

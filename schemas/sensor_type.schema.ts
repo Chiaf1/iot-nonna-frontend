@@ -72,7 +72,7 @@ export const SensorTypeSchema = SensorTypeRequestSchema.extend({
   id: z.string(),
 });
 
-export const SensorTypeListSchema = z.array(SensorTypeSchema);
+export const SensorTypeListSchema = z.array(SensorTypeSchema).nullable();
 
 export type SensorTypeRequest = z.infer<typeof SensorTypeRequestSchema>;
 export type SensorType = z.infer<typeof SensorTypeSchema>;

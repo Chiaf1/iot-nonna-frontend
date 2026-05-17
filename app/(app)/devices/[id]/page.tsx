@@ -9,6 +9,7 @@ import { getSensorTypes } from "@/services/sensor_type";
 import { getDeviceSensors } from "@/services/sensors";
 import { notFound } from "next/navigation";
 import { deleteDeviceAction, removeSensorAction } from "./actions";
+import { AddSensorToDeviceForm } from "@/components/devices/AddSensorToDeviceForm";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -23,7 +24,7 @@ export default async function DevicesById({ params }: RouteParams) {
   // Fetch parallelo non in sequenza, le varie chiamate partono insieme invece che in sequenza
   // ho dovuto aggiungere .catch(() => null) a latestDht e status perché é possibile
   // che un dispositivo nuovo non abbia letture quindi un errore (404) legittimo
-  const [sensors, rooms, sensorTypes, latestDht, latestStatus] =
+  const [deviceSensors, rooms, allSensors, latestDht, latestStatus] =
     await Promise.all([
       getDeviceSensors(id).catch(() => null),
       getRooms(),
@@ -31,6 +32,10 @@ export default async function DevicesById({ params }: RouteParams) {
       getReadingsLatestDht(id).catch(() => null),
       getReadingsLatestStatus(id).catch(() => null),
     ]);
+
+  const availableSensors = allSensors?.filter(
+    (as) => !deviceSensors?.some((ds) => ds.id === as.id),
+  );
 
   return (
     <main className=" p-20 ">
@@ -68,7 +73,7 @@ export default async function DevicesById({ params }: RouteParams) {
 
       {/* Sensori collegati */}
       <h2>Sensori collegati</h2>
-      {sensors?.map((sensor) => (
+      {deviceSensors?.map((sensor) => (
         <div key={sensor.id}>
           <p>
             {sensor.code} - {sensor.description}
@@ -80,13 +85,16 @@ export default async function DevicesById({ params }: RouteParams) {
         </div>
       )) ?? <p>Nessun sensore collegato</p>}
 
-      {/* Sensor types disponibili */}
-      <h2>Sensor types disponibili {sensorTypes.length}</h2>
-      {sensorTypes.map((st) => (
-        <div key={st.id}>
-          <p>{st.code}</p>
-        </div>
-      ))}
+      {/* Aggiungi sensore */}
+      <h2>Aggiungi sensori al device</h2>
+      {availableSensors && availableSensors.length > 0 ? (
+        <AddSensorToDeviceForm
+          deviceId={device.id}
+          sensorsAvailable={availableSensors}
+        />
+      ) : (
+        <p>Nessun sensore da poter aggiungere</p>
+      )}
 
       {/* Rooms disponibili  */}
       <h2>Rooms disponibili</h2>

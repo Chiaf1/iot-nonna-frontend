@@ -19,10 +19,10 @@ export function NavLink({ href, children }: NavLinkProps) {
     <Link
       href={href}
       className={cn(
-        "text-sm transition-colors px-3 py-1.5 rounded-md",
+        "text-sm transition-colors px-3 py-1.5 rounded-md border",
         isActive
-          ? "bg-secodary text-foreground font-medium"
-          : "text-muted-foreground hover:text-foreground hover:bg-secondary/50",
+          ? "border-border bg-secondary text-foreground font-medium"
+          : "border-transparent text-muted-foreground hover:border-border hover:text-foreground hover:bg-secondary/50",
       )}
     >
       {children}

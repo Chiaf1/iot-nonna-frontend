@@ -2,24 +2,12 @@
 import Link from "next/link";
 import { NavLink } from "./NavLink";
 import { ThemeToggle } from "./ThemeToggle";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { ChevronDown } from "lucide-react";
+import { AdminMenu } from "./AdminMenu";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/devices", label: "Devices" },
   { href: "/rooms", label: "Rooms" },
-];
-
-const adminItems = [
-  { href: "/admin/device-types", label: "Device types" },
-  { href: "/admin/sensor-types", label: "Sensor types" },
 ];
 
 export function Header() {
@@ -45,26 +33,7 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Drop down menu admin */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1 text-muted-foreground"
-                >
-                  Admin
-                  <ChevronDown className="h-3 w-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {adminItems.map((item) => (
-                  <DropdownMenuItem key={item.href} asChild>
-                    <Link href={item.href}>{item.label}</Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AdminMenu />
 
             <div className="mx-2 h-4 w-px bg-border" />
             <ThemeToggle />

@@ -4,6 +4,15 @@ import { addSensorToDeviceAction } from "@/app/(app)/devices/[id]/actions";
 import { SensorType } from "@/schemas/sensor_type.schema";
 import { FormState } from "@/types/forms";
 import { useActionState } from "react";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 type Props = {
   deviceId: string;
@@ -19,21 +28,36 @@ export function AddSensorToDeviceForm({ deviceId, sensorsAvailable }: Props) {
   );
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className="space-y-3">
       <input type="hidden" name="device_id" value={deviceId} />
-      <div>
-        <label htmlFor="sensor_id">Sensor to add: </label>
-        <select id="sensor_id" name="sensor_id">
-          {sensorsAvailable.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.code}
-            </option>
-          ))}
-        </select>
-        {state.errors?.sensor_id && <p>{state.errors.sensor_id[0]}</p>}
+      <div className="space-y-1.5">
+        <Label htmlFor="sensor_id">Sensore</Label>
+        <Select name="sensor_id">
+          <SelectTrigger id="sensor_id">
+            <SelectValue placeholder="Seleziona un sensore" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            {sensorsAvailable.map((s) => (
+              <SelectItem key={s.id} value={s.id}>
+                {s.code}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {state.errors?.sensor_id && (
+          <p className="text-xs text-destructive">
+            {state.errors.sensor_id[0]}
+          </p>
+        )}
       </div>
-      <button type="submit">Add sensor</button>
-      {state.message && <p>{state.message}</p>}
+      <Button type="submit" size="sm" variant="outline" className="w-full">
+        Aggiungi
+      </Button>
+      {state.message && (
+        <p className="text-xs text-muted-foreground text-center">
+          {state.message}
+        </p>
+      )}
     </form>
   );
 }

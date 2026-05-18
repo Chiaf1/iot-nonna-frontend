@@ -47,7 +47,8 @@ export async function updateDeviceAction(
   const raw = {
     code: formData.get("code")?.toString() ?? "",
     device_type_id: formData.get("device_type_id")?.toString() ?? "",
-    room_id: formData.get("room_id")?.toString() || undefined,
+    room_id:
+      formData.get("room_id")?.toString().replace("none", "") || undefined,
   };
   const result = DeviceRequestSchema.safeParse(raw);
   if (!result.success) {

@@ -104,7 +104,15 @@ export default async function DevicesById({ params }: RouteParams) {
                 </div>
                 <Separator />
                 <p className="text-xs text-muted-foreground">
-                  {new Date(latestDht.timestamp).toLocaleDateString("it-IT")}
+                  {new Date(latestDht.timestamp).toLocaleDateString("it-IT", {
+                    timeZone: "Europe/Rome",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
             ) : (

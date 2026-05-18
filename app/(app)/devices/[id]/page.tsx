@@ -12,6 +12,11 @@ import { deleteDeviceAction, removeSensorAction } from "./actions";
 import { AddSensorToDeviceForm } from "@/components/devices/AddSensorToDeviceForm";
 import { getDeviceTypes } from "@/services/device_type";
 import { EditDeviceForm } from "@/components/devices/EditDeviceForm";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Cpu, Droplet, MapPin, Tag, Thermometer } from "lucide-react";
+import Link from "next/link";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -42,71 +47,185 @@ export default async function DevicesById({ params }: RouteParams) {
     getDeviceTypes(),
   ]);
 
+  const isOnline = latestStatus?.status ?? null;
+
   const availableSensors = allSensors?.filter(
     (as) => !deviceSensors?.some((ds) => ds.id === as.id),
   );
 
   return (
-    <main className=" p-20 ">
-      {/* Stato online / offline */}
-      <div>
-        <span>Stato: </span>
-        {latestStatus ? (
-          <span>{latestStatus.status ? "Online" : "Offline"}</span>
+    <div className="space-y-6">
+      {/* Titolo pagina */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{device.code}</h1>
+          <p className="text-sm text-muted-foreground">
+            {device.device_type.code}
+          </p>
+        </div>
+
+        {isOnline === null ? (
+          <Badge variant="outline">Sconosciuto</Badge>
+        ) : isOnline ? (
+          <Badge variant="success">Online</Badge>
         ) : (
-          <span>Sconosciuto</span>
+          <Badge variant="destructive">Offline</Badge>
         )}
       </div>
 
-      {/* Dati device */}
-      <h1>Device: {device.code}</h1>
-      <p>Tipo: {device.device_type.code}</p>
-      <p>Stanza: {device.room?.name ?? "Nessuna stanza"}</p>
-      <pre>{JSON.stringify(device, null, 2)}</pre>
-      {/* Elimina device */}
-      <DeleteButton
-        action={deleteDeviceAction.bind(null, id)}
-        label="Elimina Device"
-      />
-      {/* Ultima lettura DHT */}
-      <h2>Dati ultima lettura</h2>
-      {latestDht ? (
-        <div>
-          <p>Temperatura: {latestDht.temperature?.toFixed(1)}°C</p>
-          <p>Umidità: {latestDht.humidity?.toFixed(1)}%</p>
-          <p>Timestamp: {latestDht.timestamp}</p>
-        </div>
-      ) : (
-        <p>Nessuna lettura disponibile</p>
-      )}
+      {/* Griglia principale: letture a sinistra, dettagli a destra */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Card letture */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Ultima lettura</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {latestDht ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Thermometer className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-2xl font-semibold">
+                      {latestDht.temperature?.toFixed(1)}°C
+                    </p>
+                    <p className="text-xs text-muted-foreground">Temperatura</p>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex items-center gap-3">
+                  <Droplet className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-2xl font-semibold">
+                      {latestDht.humidity?.toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-muted-foreground">Umidità</p>
+                  </div>
+                </div>
+                <Separator />
+                <p className="text-xs text-muted-foreground">
+                  {new Date(latestDht.timestamp).toLocaleDateString("it-IT")}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Nessuna lettura disponibile
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Sensori collegati */}
-      <h2>Sensori collegati</h2>
-      {deviceSensors?.map((sensor) => (
-        <div key={sensor.id}>
-          <p>
-            {sensor.code} - {sensor.description}
-          </p>
-          <DeleteButton
-            action={removeSensorAction.bind(null, id, sensor.id)}
-            label="Rimuovi Sensore"
-          />
-        </div>
-      )) ?? <p>Nessun sensore collegato</p>}
+        {/* Card dettagli device */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Dettagli</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-2 text-sm">
+              <Cpu className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">Tipo:</span>
+              <Link
+                href={`/admin/device-types/${device.device_type.id}`}
+                className="hover:underline"
+              >
+                <span className="font-medium">{device.device_type.code}</span>
+              </Link>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">Stanza:</span>
+              {device.room ? (
+                <Link
+                  href={`/rooms/${device.room.id}`}
+                  className="font-medium hover:underline"
+                >
+                  {device.room.name}
+                </Link>
+              ) : (
+                <span className="font-medium">Nessuna stanza</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Tag className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">ID:</span>
+              <span className="font-mono text-xs text-muted-foreground">
+                {device.id}
+              </span>
+            </div>
+            <Separator />
 
-      {/* Aggiungi sensore */}
-      <h2>Aggiungi sensori al device</h2>
-      {availableSensors && availableSensors.length > 0 ? (
-        <AddSensorToDeviceForm
-          deviceId={device.id}
-          sensorsAvailable={availableSensors}
-        />
-      ) : (
-        <p>Nessun sensore da poter aggiungere</p>
-      )}
+            {/* Form modifica inline */}
+            <EditDeviceForm
+              device={device}
+              deviceTypes={deviceTypes}
+              rooms={rooms}
+            />
+            <Separator />
+            <DeleteButton
+              action={deleteDeviceAction.bind(null, id)}
+              label="Elimina device"
+            />
+          </CardContent>
+        </Card>
+      </div>
 
-      <h2>Modifica device</h2>
-      <EditDeviceForm device={device} deviceTypes={deviceTypes} rooms={rooms} />
-    </main>
+      {/* Card sensori */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">
+            Sensori collegati ({deviceSensors?.length ?? 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {/* Lista sensori */}
+          {deviceSensors && deviceSensors.length > 0 ? (
+            <div className="space-y-2">
+              {deviceSensors.map((sensor) => (
+                <div
+                  key={sensor.id}
+                  className="flex items-center justify-between rounded-md border px-3 py-2"
+                >
+                  <div>
+                    <p className="text-sm font-medium">
+                      <Link
+                        href={`/admin/sensor-types/${sensor.id}`}
+                        className="hover:underline"
+                      >
+                        {sensor.code}
+                      </Link>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {sensor.description}
+                    </p>
+                  </div>
+                  <DeleteButton
+                    action={removeSensorAction.bind(null, id, sensor.id)}
+                    label="Rimuovi"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Nessun sensore collegato
+            </p>
+          )}
+
+          {/* Form aggiunta sensore */}
+          {availableSensors && availableSensors.length > 0 && (
+            <>
+              <Separator />
+              <div>
+                <p className="text-sm font-medium mb-2">Aggiungi sensore</p>
+                <AddSensorToDeviceForm
+                  deviceId={device.id}
+                  sensorsAvailable={availableSensors}
+                />
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

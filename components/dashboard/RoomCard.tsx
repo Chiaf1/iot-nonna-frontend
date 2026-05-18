@@ -22,7 +22,16 @@ export function RoomCard({ roomName, devices }: Props) {
     >
       <CardHeader className="pb-3">
         <CardTitle className="test-base">
-          {roomName ?? "Senza stanza"}
+          {isUnassigned ? (
+            "Senza stanza"
+          ) : (
+            <Link
+              href={`/rooms/${devices[0].device.room?.id}`}
+              className="hover:underline"
+            >
+              {roomName}
+            </Link>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>

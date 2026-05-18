@@ -1,15 +1,11 @@
 import { getDevices } from "@/services/device";
-import { Device } from "@/schemas/device.schema";
-import { DhtReadings } from "@/schemas/readings.schema";
-import { getReadingsLatestDht } from "@/services/readings";
+import {
+  getReadingsLatestDht,
+  getReadingsLatestStatus,
+} from "@/services/readings";
 import Link from "next/link";
-
-// Siccoem voglio mostrare le ultime letture di temperatura devo creare una struttura
-// che assci il device con l'ultimo valore letto
-type DeviceWithReading = {
-  device: Device;
-  latestDht: DhtReadings | null;
-};
+import { DeviceWithReading } from "@/types/dashboard";
+import { RoomCard } from "@/components/dashboard/RoomCard";
 
 // Per visualizzare i dati nella pagina dahsboard bisogna raggruppare i device per stanza
 // quindi per farlo bisogna crare una struttura che renda questo lavoro più chiaro
@@ -28,8 +24,11 @@ export default async function Dashboard() {
   // il .catch(() => null) é fondamentale altrimenti tutta la pagina crasherebbe al primo errore
   const devicesWithReadings: DeviceWithReading[] = await Promise.all(
     devices.map(async (device) => {
-      const latestDht = await getReadingsLatestDht(device.id).catch(() => null);
-      return { device, latestDht };
+      const [latestDht, latestStatus] = await Promise.all([
+        getReadingsLatestDht(device.id).catch(() => null),
+        getReadingsLatestStatus(device.id).catch(() => null),
+      ]);
+      return { device, latestDht, latestStatus };
     }),
   );
 
@@ -67,33 +66,17 @@ export default async function Dashboard() {
   });
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-
-      {roomGroups.map((group) => (
-        <div key={group.roomId}>
-          <h2>{group.roomName ?? "Senza stanza"}</h2>
-          <div>
-            {group.devices.map(({ device, latestDht }) => (
-              <Link key={device.id} href={`/devices/${device.id}`}>
-                <div>
-                  <p>{device.code}</p>
-                  <p>{device.device_type.code}</p>
-
-                  {latestDht ? (
-                    <div>
-                      <span>🌡 {latestDht.temperature?.toFixed(1)}°C</span>
-                      <span>💧 {latestDht.humidity?.toFixed(1)}%</span>
-                    </div>
-                  ) : (
-                    <p>Nessuna lettura</p>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      ))}
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <div className="space-y-4">
+        {roomGroups.map((group) => (
+          <RoomCard
+            key={group.roomId}
+            roomName={group.roomName}
+            devices={group.devices}
+          />
+        ))}
+      </div>
     </div>
   );
 }

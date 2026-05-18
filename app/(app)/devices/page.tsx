@@ -4,6 +4,14 @@ import Link from "next/link";
 import { CreateDeviceForm } from "@/components/devices/CreateDeviceForm";
 import { getRooms } from "@/services/room";
 import { getDeviceTypes } from "@/services/device_type";
+import { DeviceCard } from "@/components/dashboard/DeviceCard";
+import {
+  getReadingsLatestStatus,
+  getReadingsLatestDht,
+} from "@/services/readings";
+import { Separator } from "@/components/ui/separator";
+import { DeviceWithReading } from "@/types/dashboard";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default async function Devices() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -13,27 +21,36 @@ export default async function Devices() {
     getRooms(),
   ]);
 
+  const devicesWithReadings: DeviceWithReading[] = await Promise.all(
+    devices.map(async (device) => {
+      const [latestDht, latestStatus] = await Promise.all([
+        getReadingsLatestDht(device.id).catch(() => null),
+        getReadingsLatestStatus(device.id).catch(() => null),
+      ]);
+      return { device, latestDht, latestStatus };
+    }),
+  );
+
   return (
-    <main className=" p-20 ">
-      <h1>Device page</h1>
-      <div>
-        <h2>Devices:</h2>
-        {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
-        {devices.map((device: Device) => (
-          <div key={device.id}>
-            <Link
-              className="hover:text-blue-500"
-              href={`/devices/${device.id}`}
-            >
-              Device ID: {device.id}
-            </Link>
-            <pre>{JSON.stringify(device, null, 2)}</pre>
-          </div>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold">Devices</h1>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        {devicesWithReadings.map(({ device, latestDht, latestStatus }) => (
+          <DeviceCard
+            key={device.id}
+            device={device}
+            latestDht={latestDht}
+            latestStatus={latestStatus}
+          />
         ))}
-        {/* se non trova nessun dispositivo */}
-        {devices.length === 0 && <p>Nessun dispositivo trovato</p>}
       </div>
-      <CreateDeviceForm deviceTypes={deviceTypes} rooms={rooms} />
-    </main>
+      <Separator />
+      <Card>
+        <CardHeader className="text-base">Aggiungi decvice</CardHeader>
+        <CardContent>
+          <CreateDeviceForm deviceTypes={deviceTypes} rooms={rooms} />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

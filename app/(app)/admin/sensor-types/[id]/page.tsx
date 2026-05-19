@@ -18,7 +18,7 @@ export default async function SensorTypesById({ params }: RouteParams) {
 
   if (!st) notFound();
 
-  const isVm = st.value_mapping ? true : false;
+  const isVm = !st.value_mapping;
 
   return (
     <div className="space-y-6">

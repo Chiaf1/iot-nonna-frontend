@@ -12,6 +12,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { DeviceWithReading } from "@/types/dashboard";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
 
 export default async function Devices() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -33,6 +34,7 @@ export default async function Devices() {
 
   return (
     <div className="space-y-6">
+      <AutoRefresh intervalSeconds={30} />
       <h1 className="text-2xl font-semibold">Devices</h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {devicesWithReadings.map(({ device, latestDht, latestStatus }) => (

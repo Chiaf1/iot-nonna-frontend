@@ -3,9 +3,9 @@ import {
   getReadingsLatestDht,
   getReadingsLatestStatus,
 } from "@/services/readings";
-import Link from "next/link";
 import { DeviceWithReading } from "@/types/dashboard";
 import { RoomCard } from "@/components/dashboard/RoomCard";
+import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
 
 // Per visualizzare i dati nella pagina dahsboard bisogna raggruppare i device per stanza
 // quindi per farlo bisogna crare una struttura che renda questo lavoro più chiaro
@@ -67,6 +67,7 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <AutoRefresh intervalSeconds={30} />
       <h1 className="text-2xl font-semibold">Dashboard</h1>
       <div className="space-y-4">
         {roomGroups.map((group) => (

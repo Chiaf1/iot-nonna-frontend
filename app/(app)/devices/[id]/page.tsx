@@ -17,6 +17,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Cpu, Droplet, MapPin, Tag, Thermometer, Radio } from "lucide-react";
 import Link from "next/link";
+import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -55,6 +56,7 @@ export default async function DevicesById({ params }: RouteParams) {
 
   return (
     <div className="space-y-6">
+      <AutoRefresh intervalSeconds={15} />
       {/* Titolo pagina */}
       <div className="flex items-center justify-between">
         <div>

@@ -1,3 +1,4 @@
+import { SensorTypeCard } from "@/components/sensor_type/SensorTypeCard";
 import { SensorType } from "@/schemas/sensor_type.schema";
 import { getSensorTypes } from "@/services/sensor_type";
 import Link from "next/link";
@@ -7,25 +8,17 @@ export default async function SensorTypes() {
   const sensorTypes = await getSensorTypes();
 
   return (
-    <main className=" p-20 ">
-      <h1>SensorTypes page</h1>
-      <div>
-        <h2>SensorTypes:</h2>
-        {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
-        {sensorTypes.map((st: SensorType) => (
-          <div key={st.id}>
-            <Link
-              className="hover:text-blue-500"
-              href={`/admin/sensor-types/${st.id}`}
-            >
-              Sensor-type ID: {st.id}
-            </Link>
-            <pre>{JSON.stringify(st, null, 2)}</pre>
-          </div>
-        ))}
-        {/* se non trova nessun dispositivo */}
-        {sensorTypes.length === 0 && <p>Nessun dispositivo trovato</p>}
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold">Sensor Types</h1>
+      <div className="gap-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {sensorTypes && sensorTypes.length > 0 ? (
+          sensorTypes.map((st: SensorType) => (
+            <SensorTypeCard key={st.id} sensor={st} />
+          ))
+        ) : (
+          <p>Nessun sensor type trovato</p>
+        )}
       </div>
-    </main>
+    </div>
   );
 }

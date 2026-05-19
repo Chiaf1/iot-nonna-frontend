@@ -15,9 +15,13 @@ export async function createSensorTypeActions(
     topic: formData.get("topic")?.toString() ?? "",
     description: formData.get("description") || null,
     readings_table_name: formData.get("readings_table_name")?.toString() ?? "",
-    value_mapping: formData.get("value_mapping") || null,
+    value_mapping: formData.get("value_mapping")
+      ? JSON.parse(formData.get("value_mapping")!.toString())
+      : undefined,
     payload_format: formData.get("payload_format")?.toString() ?? "",
-    qos_mqtt: formData.get("qos_mqtt")?.toString() ?? "",
+    qos_mqtt: formData.get("qos_mqtt")
+      ? Number(formData.get("qos_mqtt"))
+      : null,
   };
   const result = SensorTypeRequestSchema.safeParse(raw);
   if (!result.success) {

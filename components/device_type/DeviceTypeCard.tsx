@@ -27,7 +27,7 @@ export function DeviceTypeCard({ deviceType }: Props) {
               </span>
             </div>
             <div className="text-xs text-muted-foreground">
-              {deviceType.description ?? (
+              {deviceType.description && (
                 <p className="text-xs text-muted-foreground">
                   {deviceType.description}
                 </p>

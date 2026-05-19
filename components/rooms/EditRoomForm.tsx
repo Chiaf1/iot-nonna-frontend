@@ -30,7 +30,7 @@ export function EditRoomForm({ room }: Props) {
           defaultValue={room.name}
         />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.name.map((err, i) => (
+        {state.errors?.name?.map((err, i) => (
           <p key={i} className="text-xs text-destructive">
             {err}
           </p>

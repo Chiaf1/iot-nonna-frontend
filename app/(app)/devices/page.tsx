@@ -46,7 +46,9 @@ export default async function Devices() {
       </div>
       <Separator />
       <Card>
-        <CardHeader className="text-base">Aggiungi decvice</CardHeader>
+        <CardHeader>
+          <CardTitle className="text-base">Aggiungi decvice</CardTitle>
+        </CardHeader>
         <CardContent>
           <CreateDeviceForm deviceTypes={deviceTypes} rooms={rooms} />
         </CardContent>

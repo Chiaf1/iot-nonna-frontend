@@ -194,14 +194,22 @@ export default async function DevicesById({ params }: RouteParams) {
                   className="flex items-center justify-between rounded-md border px-3 py-2"
                 >
                   <div>
-                    <p className="text-sm font-medium">
-                      <Link
-                        href={`/admin/sensor-types/${sensor.id}`}
-                        className="hover:underline"
-                      >
-                        {sensor.code}
-                      </Link>
-                    </p>
+                    <div className="justify-between">
+                      <p className="text-sm font-medium">
+                        <Link
+                          href={`/admin/sensor-types/${sensor.id}`}
+                          className="hover:underline"
+                        >
+                          {sensor.code}
+                        </Link>
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <p className="text-xs text-muted-foreground">
+                        Mqtt topic:
+                      </p>
+                      <p className="text-xs text-muted-foreground font-mono">{`${device.device_type.topic}/${device.code}/${sensor.topic}`}</p>
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       {sensor.description}
                     </p>

@@ -15,7 +15,7 @@ import { EditDeviceForm } from "@/components/devices/EditDeviceForm";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Cpu, Droplet, MapPin, Tag, Thermometer } from "lucide-react";
+import { Cpu, Droplet, MapPin, Tag, Thermometer, Radio } from "lucide-react";
 import Link from "next/link";
 
 type RouteParams = {
@@ -205,6 +205,7 @@ export default async function DevicesById({ params }: RouteParams) {
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
+                      <Radio className="h-4 w-4 text-muted-foreground shrink-0" />
                       <p className="text-xs text-muted-foreground">
                         Mqtt topic:
                       </p>

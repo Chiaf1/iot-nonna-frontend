@@ -4,6 +4,10 @@ import { updateDeviceTypeAction } from "@/app/(app)/admin/device-types/[id]/acti
 import { DeviceType } from "@/schemas/device_type.schema";
 import { FormState } from "@/types/forms";
 import { useActionState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 
 type Props = {
   deviceType: DeviceType;
@@ -18,11 +22,11 @@ export function EditDeviceTypeForm({ deviceType }: Props) {
   );
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className="space-y-4">
       <input type="hidden" name="device_type_id" value={deviceType.id} />
-      <div>
-        <label htmlFor="code">Code: </label>
-        <input
+      <div className="space-y-1.5">
+        <Label htmlFor="code">Code: </Label>
+        <Input
           id="code"
           name="code"
           type="text"
@@ -30,11 +34,13 @@ export function EditDeviceTypeForm({ deviceType }: Props) {
           defaultValue={deviceType.code}
         />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.code && <p>{state.errors.code[0]}</p>}
+        {state.errors?.code && (
+          <p className="text-xs text-destructive">{state.errors.code[0]}</p>
+        )}
       </div>
-      <div>
-        <label htmlFor="topic">Topic: </label>
-        <input
+      <div className="space-y-1.5">
+        <Label htmlFor="topic">Topic: </Label>
+        <Input
           id="topic"
           name="topic"
           type="text"
@@ -42,23 +48,32 @@ export function EditDeviceTypeForm({ deviceType }: Props) {
           defaultValue={deviceType.topic}
         />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.topic && <p>{state.errors.topic[0]}</p>}
+        {state.errors?.topic && (
+          <p className="text-xs text-destructive">{state.errors.topic[0]}</p>
+        )}
       </div>
-      <div>
-        <label htmlFor="description">Description: </label>
-        <input
+      <div className="space-y-1.5">
+        <Label htmlFor="description">Description: </Label>
+        <Textarea
           id="description"
           name="description"
-          type="text"
-          placeholder="Es. Devkit esp 32 wroom 2"
+          placeholder="Device type description"
           defaultValue={deviceType.description ?? ""}
         />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.description && <p>{state.errors.description[0]}</p>}
+        {state.errors?.description && (
+          <p className="text-xs text-destructive">
+            {state.errors.description[0]}
+          </p>
+        )}
       </div>
-      <button type="submit">Salva modifiche</button>
+      <Button type="submit">Salva modifiche</Button>
       {/* Messaggio di successo */}
-      {state.message && <p>{state.message}</p>}
+      {state.message && (
+        <p className="text-xs text-muted-foreground text-center">
+          {state.message}
+        </p>
+      )}
     </form>
   );
 }

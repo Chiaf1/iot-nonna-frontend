@@ -6,6 +6,7 @@ import { useActionState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 
 const initialState: FormState = {};
 
@@ -40,11 +41,10 @@ export function CreateDeviceTypeForm() {
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="description">Description</Label>
-        <Input
+        <Textarea
           id="description"
           name="description"
-          type="text"
-          placeholder="Es. Devkit esp 32 wroom 2"
+          placeholder="Input device type description (optional)"
         />
         {/* Mostra l'errore di validazione se c'è */}
         {state.errors?.description && (

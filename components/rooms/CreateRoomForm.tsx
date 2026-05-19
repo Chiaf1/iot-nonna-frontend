@@ -3,6 +3,9 @@
 import { createRoomAction } from "@/app/(app)/rooms/actions";
 import { FormState } from "@/types/forms";
 import { useActionState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 const initialState: FormState = {};
 
@@ -13,18 +16,24 @@ export function CreateRoomForm() {
   const [state, formAction] = useActionState(createRoomAction, initialState);
 
   return (
-    <form action={formAction}>
-      <div>
-        <label htmlFor="name">Name stanza</label>
-        <input id="name" name="name" type="text" placeholder="Es. Soggiorno" />
+    <form action={formAction} className="space-y-4">
+      <div className="space-y-1.5">
+        <Label htmlFor="name">Name stanza</Label>
+        <Input id="name" name="name" type="text" placeholder="Es. Soggiorno" />
         {/* Mostra l'errore di validazione se c'è */}
         {state.errors?.name.map((err, i) => (
-          <p key={i}>{err}</p>
+          <p key={i} className="text-xs text-destructive">
+            {err}
+          </p>
         ))}
       </div>
-      <button type="submit">Crea stanza</button>
+      <Button type="submit">Crea stanza</Button>
       {/* Messaggio di successo */}
-      {state.message && <p>{state.message}</p>}
+      {state.message && (
+        <p className="text-xs text-muted-foreground text-center">
+          {state.message}
+        </p>
+      )}
     </form>
   );
 }

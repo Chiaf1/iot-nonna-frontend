@@ -5,7 +5,7 @@ import { deleteSensorTypeAction } from "./actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Radio, Tag, Table2, Database, Car } from "lucide-react";
+import { Radio, Tag, Signal, Database } from "lucide-react";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -17,6 +17,8 @@ export default async function SensorTypesById({ params }: RouteParams) {
   const st = await getSensorType(id);
 
   if (!st) notFound();
+
+  const isVm = st.value_mapping ? true : false;
 
   return (
     <div className="space-y-6">
@@ -49,7 +51,7 @@ export default async function SensorTypesById({ params }: RouteParams) {
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Table2 className="h-4 w-4 text-muted-foreground shrink-0" />
+              <Signal className="h-4 w-4 text-muted-foreground shrink-0" />
               <span className="text-muted-foreground">QoS MQTT:</span>
               <span className="font-medium">{st.qos_mqtt ?? "-"}</span>
             </div>
@@ -98,6 +100,20 @@ export default async function SensorTypesById({ params }: RouteParams) {
             )}
           </CardContent>
         </Card>
+
+        {/* Value mapping */}
+        {isVm && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Value mapping</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <pre>{JSON.stringify(st.value_mapping, null, 2)}</pre>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

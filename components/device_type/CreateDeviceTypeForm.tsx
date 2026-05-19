@@ -3,6 +3,9 @@
 import { createDeviceTypeAction } from "@/app/(app)/admin/device-types/actions";
 import { FormState } from "@/types/forms";
 import { useActionState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 const initialState: FormState = {};
 
@@ -13,38 +16,50 @@ export function CreateDeviceTypeForm() {
   );
 
   return (
-    <form action={formAction}>
-      <div>
-        <label htmlFor="code">Code</label>
-        <input
+    <form action={formAction} className="space-y-4">
+      <div className="space-y-1.5">
+        <Label htmlFor="code">Code</Label>
+        <Input
           id="code"
           name="code"
           type="text"
           placeholder="Es. esp32-wroom"
         />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.code && <p>{state.errors.code[0]}</p>}
+        {state.errors?.code && (
+          <p className="text-xs text-destructive">{state.errors.code[0]}</p>
+        )}
       </div>
-      <div>
-        <label htmlFor="topic">Topic</label>
-        <input id="topic" name="topic" type="text" placeholder="Es. esp32" />
+      <div className="space-y-1.5">
+        <Label htmlFor="topic">Topic</Label>
+        <Input id="topic" name="topic" type="text" placeholder="Es. esp32" />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.topic && <p>{state.errors.topic[0]}</p>}
+        {state.errors?.topic && (
+          <p className="text-xs text-destructive">{state.errors.topic[0]}</p>
+        )}
       </div>
-      <div>
-        <label htmlFor="description">Description</label>
-        <input
+      <div className="space-y-1.5">
+        <Label htmlFor="description">Description</Label>
+        <Input
           id="description"
           name="description"
           type="text"
           placeholder="Es. Devkit esp 32 wroom 2"
         />
         {/* Mostra l'errore di validazione se c'è */}
-        {state.errors?.description && <p>{state.errors.description[0]}</p>}
+        {state.errors?.description && (
+          <p className="text-xs text-destructive">
+            {state.errors.description[0]}
+          </p>
+        )}
       </div>
-      <button type="submit">Crea DeviceType</button>
+      <Button type="submit">Crea DeviceType</Button>
       {/* Messaggio di successo */}
-      {state.message && <p>{state.message}</p>}
+      {state.message && (
+        <p className="text-xs text-muted-foreground text-center">
+          {state.message}
+        </p>
+      )}
     </form>
   );
 }

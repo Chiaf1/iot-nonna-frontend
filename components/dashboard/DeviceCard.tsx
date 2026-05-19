@@ -17,7 +17,7 @@ export function DeviceCard({ device, latestDht, latestStatus }: Props) {
   return (
     <Link href={`/devices/${device.id}`}>
       <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-        <CardContent className="pt-4">
+        <CardContent className="pt-0.5 pb-1">
           {/* Header: nome + stato */}
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>

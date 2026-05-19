@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { DeviceType } from "@/schemas/device_type.schema";
+import { Radio } from "lucide-react";
 
 type Props = {
   deviceType: DeviceType;
@@ -19,10 +20,11 @@ export function DeviceTypeCard({ deviceType }: Props) {
               {deviceType.code}
             </p>
             <div className="text-xs flex flex-row items-center gap-1">
-              <p className="text-muted-foreground">Topic:</p>
-              <p className="text-muted-foreground font-mono">
+              <Radio className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">Topic:</span>
+              <span className="text-muted-foreground font-mono">
                 {deviceType.topic}
-              </p>
+              </span>
             </div>
             <div className="text-xs text-muted-foreground">
               {deviceType.description ?? (

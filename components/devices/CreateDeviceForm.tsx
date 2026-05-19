@@ -79,9 +79,7 @@ export function CreateDeviceForm({ deviceTypes, rooms }: Props) {
         </Select>
       </div>
 
-      <Button type="submit" size="sm" className="w-full">
-        Crea Device
-      </Button>
+      <Button type="submit">Crea Device</Button>
       {state.message && (
         <p className="text-xs text-muted-foreground text-center">
           {state.message}

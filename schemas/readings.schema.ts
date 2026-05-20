@@ -12,7 +12,7 @@ export const DhtReadingsSchema = BaseReadingsSchema.extend({
   humidity: z.number().optional().nullable(),
 });
 
-export const DhtReadingsListSchema = z.array(DhtReadingsSchema);
+export const DhtReadingsListSchema = z.array(DhtReadingsSchema).nullable();
 
 export const StatusReadingsSchema = BaseReadingsSchema.extend({
   status: z.boolean(),

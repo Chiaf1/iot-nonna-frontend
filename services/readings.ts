@@ -27,7 +27,6 @@ export const getReadingsRangeDht = (id: string, params?: GetReadingsParams) => {
   if (params?.limit) search.append("limit", params.limit);
 
   const url = `${baseDHT}/${id}${search.toString() ? `?${search.toString()}` : ""}`;
-
   return apiGet(url, DhtReadingsListSchema);
 };
 

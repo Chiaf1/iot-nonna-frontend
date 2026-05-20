@@ -3,6 +3,7 @@ import { getDevice } from "@/services/device";
 import {
   getReadingsLatestDht,
   getReadingsLatestStatus,
+  getReadingsRangeDht,
 } from "@/services/readings";
 import { getRooms } from "@/services/room";
 import { getSensorTypes } from "@/services/sensor_type";
@@ -18,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { Cpu, Droplet, MapPin, Tag, Thermometer, Radio } from "lucide-react";
 import Link from "next/link";
 import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
+import { DhtChart } from "@/components/devices/DhtChart";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -29,6 +31,11 @@ export default async function DevicesById({ params }: RouteParams) {
   const device = await getDevice(id).catch(() => null);
   if (!device) notFound();
 
+  // Preparazione data per lettura grafico giornaliero
+  const now = new Date();
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
   // Fetch parallelo non in sequenza, le varie chiamate partono insieme invece che in sequenza
   // ho dovuto aggiungere .catch(() => null) a latestDht e status perché é possibile
   // che un dispositivo nuovo non abbia letture quindi un errore (404) legittimo
@@ -39,6 +46,7 @@ export default async function DevicesById({ params }: RouteParams) {
     latestDht,
     latestStatus,
     deviceTypes,
+    dhtReadings,
   ] = await Promise.all([
     getDeviceSensors(id).catch(() => null),
     getRooms(),
@@ -46,6 +54,11 @@ export default async function DevicesById({ params }: RouteParams) {
     getReadingsLatestDht(id).catch(() => null),
     getReadingsLatestStatus(id).catch(() => null),
     getDeviceTypes(),
+    getReadingsRangeDht(id, {
+      from: startOfDay.toISOString(),
+      to: now.toISOString(),
+      limit: "2000",
+    }).catch(() => []),
   ]);
 
   const isOnline = latestStatus?.status ?? null;
@@ -116,6 +129,7 @@ export default async function DevicesById({ params }: RouteParams) {
                     year: "numeric",
                   })}
                 </p>
+                <DhtChart readings={dhtReadings} />
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">

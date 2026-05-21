@@ -103,11 +103,11 @@ export function DhtChart({ readings }: Props) {
           tick={{ fill: "#aaa", fontSize: 11 }}
           width={25}
           domain={["auto", "auto"]}
-          orientation="right"
           tickFormatter={(v) => `${v}°`}
         />
         <YAxis
           yAxisId="hum"
+          orientation="right"
           tickLine={false}
           axisLine={false}
           tick={{ fill: "#aaa", fontSize: 11 }}

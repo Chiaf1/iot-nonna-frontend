@@ -93,33 +93,11 @@ export default async function DevicesById({ params }: RouteParams) {
         {/* Card letture */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Ultima lettura</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {latestDht ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Thermometer className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-2xl font-semibold">
-                      {latestDht.temperature?.toFixed(1)}°C
-                    </p>
-                    <p className="text-xs text-muted-foreground">Temperatura</p>
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex items-center gap-3">
-                  <Droplet className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-2xl font-semibold">
-                      {latestDht.humidity?.toFixed(1)}%
-                    </p>
-                    <p className="text-xs text-muted-foreground">Umidità</p>
-                  </div>
-                </div>
-                <Separator />
-                <p className="text-xs text-muted-foreground">
-                  {new Date(latestDht.timestamp).toLocaleDateString("it-IT", {
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">Ultima lettura</CardTitle>
+              {latestDht && (
+                <span className="text-xs text-muted-foreground">
+                  {new Date(latestDht.timestamp).toLocaleString("it-IT", {
                     timeZone: "Europe/Rome",
                     hour: "2-digit",
                     minute: "2-digit",
@@ -128,7 +106,40 @@ export default async function DevicesById({ params }: RouteParams) {
                     month: "2-digit",
                     year: "numeric",
                   })}
-                </p>
+                </span>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {latestDht ? (
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="flex flex-1 items-center justify-center gap-3">
+                    <Thermometer className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-2xl font-semibold">
+                        {latestDht.temperature?.toFixed(1)}°C
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Temperatura
+                      </p>
+                    </div>
+                  </div>
+
+                  <Separator orientation="vertical" className="h-12 mx-4" />
+
+                  <div className="flex flex-1 items-center justify-center gap-3">
+                    <Droplet className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-2xl font-semibold">
+                        {latestDht.humidity?.toFixed(1)}%
+                      </p>
+                      <p className="text-xs text-muted-foreground">Umidità</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
                 <DhtChart readings={dhtReadings} />
               </div>
             ) : (

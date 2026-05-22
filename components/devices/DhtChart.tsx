@@ -14,6 +14,8 @@ import { getDayBounds } from "@/lib/charts/dataRefinement";
 
 type Props = {
   readings: DhtReadings[] | null;
+  dayStart?: number; // timestamp in ms di inizio giornata
+  dayEnd?: number; // timestamp in ms di fine giornata
 };
 
 const chartConfig = {
@@ -27,7 +29,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DhtChart({ readings }: Props) {
+export function DhtChart({ readings, dayStart, dayEnd }: Props) {
   if (readings === null || readings.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
@@ -46,8 +48,20 @@ export function DhtChart({ readings }: Props) {
     });
   };
 
-  const { start, end } = getDayBounds();
-
+  const start =
+    dayStart ??
+    (() => {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    })();
+  const end =
+    dayEnd ??
+    (() => {
+      const d = new Date();
+      d.setHours(23, 59, 59, 999);
+      return d.getTime();
+    })();
   // Ogni punto ha il timestamp (ts) come numero che recharts userà per il posizionamento sull'asse x
   const data = readings
     .slice()

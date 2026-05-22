@@ -29,6 +29,7 @@ import Link from "next/link";
 import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
 import { DhtChart } from "@/components/devices/DhtChart";
 import { Button } from "@/components/ui/button";
+import { CollapsibleForm } from "@/components/ui_personal/CollapsibleForm";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -207,11 +208,13 @@ export default async function DevicesById({ params }: RouteParams) {
             <Separator />
 
             {/* Form modifica inline */}
-            <EditDeviceForm
-              device={device}
-              deviceTypes={deviceTypes}
-              rooms={rooms}
-            />
+            <CollapsibleForm label="Modifica device">
+              <EditDeviceForm
+                device={device}
+                deviceTypes={deviceTypes}
+                rooms={rooms}
+              />
+            </CollapsibleForm>
             <Separator />
             <DeleteButton
               action={deleteDeviceAction.bind(null, id)}

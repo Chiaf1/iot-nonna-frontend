@@ -16,10 +16,19 @@ import { EditDeviceForm } from "@/components/devices/EditDeviceForm";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Cpu, Droplet, MapPin, Tag, Thermometer, Radio } from "lucide-react";
+import {
+  Cpu,
+  Droplet,
+  MapPin,
+  Tag,
+  Thermometer,
+  Radio,
+  History,
+} from "lucide-react";
 import Link from "next/link";
 import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
 import { DhtChart } from "@/components/devices/DhtChart";
+import { Button } from "@/components/ui/button";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -147,6 +156,14 @@ export default async function DevicesById({ params }: RouteParams) {
                 Nessuna lettura disponibile
               </p>
             )}
+            <div className="flex justify-end">
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/devices/${id}/history`}>
+                  <History className="h-4 w-4 mr-2" />
+                  Storico letture
+                </Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

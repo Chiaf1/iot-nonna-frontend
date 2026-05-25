@@ -1,22 +1,19 @@
 # Stage 1: install dependencies
-FROM node:24-slim AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 
 # Enable pnpm
-RUN corepack enable \
-  && corepack prepare pnpm@9.15.4 --activate
-
+RUN npm install -g pnpm@9.15.4 --ignore-scripts
 
 COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
 # Stage 2: build
-FROM node:24-slim AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
-RUN corepack enable \
-  && corepack prepare pnpm@9.15.4 --activate
+RUN npm install -g pnpm@9.15.4 --ignore-scripts
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

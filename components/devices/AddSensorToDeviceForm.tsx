@@ -50,7 +50,7 @@ export function AddSensorToDeviceForm({ deviceId, sensorsAvailable }: Props) {
           </p>
         )}
       </div>
-      <Button type="submit" size="sm" variant="outline" className="w-full">
+      <Button type="submit" size="sm" className="w-full">
         Aggiungi
       </Button>
       {state.message && (

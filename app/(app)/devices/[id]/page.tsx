@@ -279,13 +279,12 @@ export default async function DevicesById({ params }: RouteParams) {
           {availableSensors && availableSensors.length > 0 && (
             <>
               <Separator />
-              <div>
-                <p className="text-sm font-medium mb-2">Aggiungi sensore</p>
+              <CollapsibleForm label="Aggiungi sensore">
                 <AddSensorToDeviceForm
                   deviceId={device.id}
                   sensorsAvailable={availableSensors}
                 />
-              </div>
+              </CollapsibleForm>
             </>
           )}
         </CardContent>

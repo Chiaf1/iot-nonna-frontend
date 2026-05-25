@@ -14,6 +14,7 @@ import { DeviceWithReading } from "@/types/dashboard";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { AutoRefresh } from "@/components/ui_personal/AutoRefresh";
 import { CreateDeviceDialog } from "@/components/devices/CreateDeviceDialog";
+import { DevicesPageClient } from "@/components/devices/DevicesPageClient";
 
 export default async function Devices() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -35,11 +36,10 @@ export default async function Devices() {
 
   return (
     <div className="space-y-6">
-      <AutoRefresh intervalSeconds={30} />
       {/* Header con bottone aggiungi */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Devices</h1>
-        <CreateDeviceDialog deviceTypes={deviceTypes} rooms={rooms} />
+        <DevicesPageClient deviceTypes={deviceTypes} rooms={rooms} />
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">

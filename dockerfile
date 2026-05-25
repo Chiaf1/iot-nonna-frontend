@@ -32,7 +32,8 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 ENV API_URL=http://localhost:3030
-ENV HOSTNAME=0.0.0.0
+ENV NODE_ENV=production
+ENV PORT=3000
 
 EXPOSE 3000
 

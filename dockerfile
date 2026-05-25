@@ -34,8 +34,6 @@ COPY --from=builder /app/public ./public
 ENV API_URL=http://localhost:3030
 ENV HOSTNAME=0.0.0.0
 
-RUN sed -i 's/hostname = .*/hostname = "0.0.0.0"/' server.js
-
 EXPOSE 3000
 
 CMD ["node", "server.js"]

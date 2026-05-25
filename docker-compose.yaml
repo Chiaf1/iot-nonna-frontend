@@ -1,0 +1,34 @@
+services:
+  pg_db:
+      image: postgres:18.2
+      restart: unless-stopped
+      ports:
+        - 5432:5432
+      env_file:
+        - configs/postgres/.env
+      volumes:
+        - pgdata:/var/lib/postgresql
+  core:
+    image: chiaf1/iot-nonna-core:1
+    restart: unless-stopped
+    ports:
+      - 3030:3030
+    volumes:
+      - ./configs/core/config.yaml:/app/config.yaml
+    depends_on:
+      - pg_db
+    environment:
+      - RUN_MIGRATIONS=true
+      - RUN_SEEDING=true
+  frontend:
+    image: iot-nonna-frontend:1
+    ports:
+      - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - API_URL=http://core:3030
+    depends_on:
+      - core
+volumes:
+  pgdata:

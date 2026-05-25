@@ -5,7 +5,7 @@ export async function fetchAndParse<S extends z.ZodType>(
   schema: S,
   options?: RequestInit,
 ): Promise<z.infer<S>> {
-  const res = await fetch(url, options);
+  const res = await fetch(url, { ...options, cache: "no-store" });
 
   if (!res.ok) {
     throw new Error(`HTTP error ${res.status}`);

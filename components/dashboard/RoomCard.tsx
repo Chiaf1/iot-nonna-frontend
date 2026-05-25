@@ -35,7 +35,7 @@ export function RoomCard({ roomName, devices }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {devices.map(({ device, latestDht, latestStatus }) => (
             <DeviceCard
               key={device.id}

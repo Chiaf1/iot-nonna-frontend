@@ -91,7 +91,7 @@ export function DhtChart({ readings, dayStart, dayEnd }: Props) {
     });
 
   return (
-    <ChartContainer config={chartConfig} className="h-64 w-full">
+    <ChartContainer config={chartConfig} className="h-64 w-full min-w-0">
       <LineChart
         data={data}
         margin={{ top: 10, right: 20, left: 20, bottom: 0 }}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { NavLink } from "./NavLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { AdminMenu } from "./AdminMenu";
+import { MobileMenu } from "./MobileMenu";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -22,8 +23,8 @@ export function Header() {
           >
             Iot Nonna
           </Link>
-          {/*destra - Navigazione principale e admin*/}
-          <div className="flex items-center gap-6">
+          {/*destra - Navigazione principale e admin - nascosta su mobile*/}
+          <div className="hidden md:flex items-center gap-1">
             {/* Navigazione principale */}
             <nav className="flex items-center gap-1">
               {navItems.map((item) => (
@@ -37,6 +38,12 @@ export function Header() {
 
             <div className="mx-2 h-4 w-px bg-border" />
             <ThemeToggle />
+          </div>
+
+          {/* Hamburger + tema - nascosto su desktop */}
+          <div className="flex md:hidden items-center gap-1">
+            <ThemeToggle />
+            <MobileMenu />
           </div>
         </div>
       </div>

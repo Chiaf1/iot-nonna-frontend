@@ -2,18 +2,26 @@
 
 import { createRoomAction } from "@/app/(app)/rooms/actions";
 import { FormState } from "@/types/forms";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
+type Props = {
+  onSuccess?: () => void;
+};
+
 const initialState: FormState = {};
 
-export function CreateRoomForm() {
+export function CreateRoomForm({ onSuccess }: Props) {
   // useActionState collega il form alla server acction
   // state = quello che la action ha ritornato (errori o messaggi)
   // formAction = la funzione da passare all'attributo action del form
   const [state, formAction] = useActionState(createRoomAction, initialState);
+
+  useEffect(() => {
+    if (state.message && !state.errors) onSuccess?.();
+  }, [state]);
 
   return (
     <form action={formAction} className="space-y-4">

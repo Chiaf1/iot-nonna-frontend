@@ -2,19 +2,27 @@
 
 import { createDeviceTypeAction } from "@/app/(app)/admin/device-types/actions";
 import { FormState } from "@/types/forms";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 
+type Props = {
+  onSuccess?: () => void;
+};
+
 const initialState: FormState = {};
 
-export function CreateDeviceTypeForm() {
+export function CreateDeviceTypeForm({ onSuccess }: Props) {
   const [state, formAction] = useActionState(
     createDeviceTypeAction,
     initialState,
   );
+
+  useEffect(() => {
+    if (state.message && !state.errors) onSuccess?.();
+  }, [state]);
 
   return (
     <form action={formAction} className="space-y-4">

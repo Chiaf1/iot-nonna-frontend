@@ -4,6 +4,7 @@ import { DeviceType } from "@/schemas/device_type.schema";
 import { getDeviceTypes } from "@/services/device_type";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CreateDevicetypeDialog } from "@/components/device_type/CreateDevicetypeDialog";
 
 export default async function DeviceTypes() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -11,7 +12,10 @@ export default async function DeviceTypes() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Device Types</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Device Types</h1>
+        <CreateDevicetypeDialog />
+      </div>
       <div className="gap-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}
         {deviceTypes.map((dt: DeviceType) => (
@@ -20,13 +24,6 @@ export default async function DeviceTypes() {
         {/* se non trova nessun dispositivo */}
         {deviceTypes.length === 0 && <p>Nessun dispositivo trovato</p>}
       </div>
-      <Separator />
-      <Card>
-        <CardHeader className="text-base">Aggiungi device type</CardHeader>
-        <CardContent>
-          <CreateDeviceTypeForm />
-        </CardContent>
-      </Card>
     </div>
   );
 }

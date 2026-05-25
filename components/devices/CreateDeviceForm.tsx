@@ -4,7 +4,7 @@ import { createDeviceAction } from "@/app/(app)/devices/actions";
 import { DeviceType } from "@/schemas/device_type.schema";
 import { Room } from "@/schemas/room.schema";
 import { FormState } from "@/types/forms";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -19,12 +19,17 @@ import {
 type Props = {
   deviceTypes: DeviceType[];
   rooms: Room[];
+  onSuccess?: () => void;
 };
 
 const initialState: FormState = {};
 
-export function CreateDeviceForm({ deviceTypes, rooms }: Props) {
+export function CreateDeviceForm({ deviceTypes, rooms, onSuccess }: Props) {
   const [state, formAction] = useActionState(createDeviceAction, initialState);
+
+  useEffect(() => {
+    if (state.message && !state.errors) onSuccess?.();
+  }, [state]);
 
   return (
     <form action={formAction} className="space-y-4">

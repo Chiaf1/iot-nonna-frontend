@@ -30,6 +30,6 @@ export async function createRoomAction(
   }
 
   await createRoom(result.data);
-  revalidatePath("/rooms");
+  // revalidatePath("/rooms"); l'ho tolto perchè andava in conflitto con la dialog
   return { message: "Stanza creata con successo" };
 }

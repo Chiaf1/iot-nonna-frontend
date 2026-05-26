@@ -1,11 +1,7 @@
-import { CreateRoomForm } from "@/components/rooms/CreateRoomForm";
 import { Room } from "@/schemas/room.schema";
 import { getRooms } from "@/services/room";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { RoomCardSimple } from "@/components/rooms/RoomCardSimple";
-import { CreateRoomDialog } from "@/components/rooms/CreateRoomDialog";
+import { RoomsPageClient } from "@/components/rooms/RoomsPageClient";
 
 export default async function Rooms() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -15,7 +11,7 @@ export default async function Rooms() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Rooms</h1>
-        <CreateRoomDialog />
+        <RoomsPageClient />
       </div>
       <div className="gap-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}

@@ -1,10 +1,7 @@
-import { CreateDeviceTypeForm } from "@/components/device_type/CreateDeviceTypeForm";
 import { DeviceTypeCard } from "@/components/device_type/DeviceTypeCard";
 import { DeviceType } from "@/schemas/device_type.schema";
 import { getDeviceTypes } from "@/services/device_type";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { CreateDevicetypeDialog } from "@/components/device_type/CreateDevicetypeDialog";
+import { DevicetypePageClient } from "@/components/device_type/DevicetypePageClient";
 
 export default async function DeviceTypes() {
   // 1. Raccatta i dati lato server non serve fare fetch
@@ -14,7 +11,7 @@ export default async function DeviceTypes() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Device Types</h1>
-        <CreateDevicetypeDialog />
+        <DevicetypePageClient />
       </div>
       <div className="gap-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {/* 2. Cicliamo l'array e printiamo ogni dispositivo */}

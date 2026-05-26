@@ -27,6 +27,6 @@ export async function createDeviceTypeAction(
   }
 
   await createDeviceType(result.data);
-  revalidatePath("/device-types");
+  // revalidatePath("/device-types"); l'ho tolto perchè andava in conflitto con la dialog
   return { message: "Device type creato con successo" };
 }

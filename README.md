@@ -1,57 +1,59 @@
 # iot-nonna-frontend
 
-Frontend del sistema IoT Nonna — dashboard di monitoraggio per dispositivi IoT domestici. Costruito con Next.js 16, Tailwind CSS e shadcn/ui, consuma esclusivamente le API REST esposte da `iot-nonna-core`.
+> Part of the **iot-nonna** project. For the whole system and the Docker Compose deployment, see [iot-nonna-containers](https://github.com/Chiaf1/iot-nonna-containers).
+
+Frontend of the Nonna IoT system: a monitoring dashboard for home IoT devices. Built with Next.js 16, Tailwind CSS and shadcn/ui, it consumes only the REST APIs exposed by `iot-nonna-core`.
 
 ---
 
-## Stack tecnico
+## Tech stack
 
-| Tecnologia | Ruolo |
-|---|---|
-| Next.js 16 (App Router) | Framework — routing, rendering, Server Actions |
-| TypeScript | Tipizzazione statica |
-| Tailwind CSS | Stile utility-first |
-| shadcn/ui | Componenti UI (Card, Dialog, Chart, ...) |
-| Zod | Validazione degli schema API |
-| Recharts | Grafici letture sensori |
-| next-themes | Gestione tema chiaro/scuro |
+| Technology              | Role                                          |
+| ----------------------- | --------------------------------------------- |
+| Next.js 16 (App Router) | Framework: routing, rendering, Server Actions |
+| TypeScript              | Static typing                                 |
+| Tailwind CSS            | Utility-first styling                         |
+| shadcn/ui               | UI components (Card, Dialog, Chart, ...)      |
+| Zod                     | API schema validation                         |
+| Recharts                | Sensor reading charts                         |
+| next-themes             | Light/dark theme handling                     |
 
 ---
 
-## Architettura del sistema completo
+## Architecture of the whole system
 
 ```
-[Sensori fisici]
+[Physical sensors]
       │ MQTT
       ▼
-[iot-nonna-ingest]  ──── scrive dati grezzi ────▶  [PostgreSQL]
-                                                         │
-[iot-nonna-core]    ──── legge e espone API REST ────────┘
+[iot-nonna-ingest]  ──── writes raw data ────▶  [PostgreSQL]
+                                                      │
+[iot-nonna-core]    ──── reads and exposes REST API ──┘
       │
       │ HTTP
       ▼
-[iot-nonna-frontend]  ──── consuma solo API REST
+[iot-nonna-frontend]  ──── consumes only the REST API
 ```
 
-Il frontend non accede mai direttamente al database. Tutta la logica di dominio è in `iot-nonna-core`.
+The frontend never accesses the database directly. All the domain logic lives in `iot-nonna-core`.
 
 ---
 
-## Struttura del progetto
+## Project structure
 
 ```
 app/
-  layout.tsx                  # Root layout — ThemeProvider, font
+  layout.tsx                  # Root layout: ThemeProvider, font
   (app)/
-    layout.tsx                # Layout con header — tutte le pagine autenticate
-    dashboard/                # Overview dispositivi raggruppati per stanza
+    layout.tsx                # Layout with header: all the app pages (no authentication)
+    dashboard/                # Overview of devices grouped by room
     devices/
-      page.tsx                # Lista device con letture in tempo reale
+      page.tsx                # Device list with live readings
       [id]/
-        page.tsx              # Dettaglio device — letture, sensori, grafico giornaliero
+        page.tsx              # Device detail: readings, sensors, daily chart
         history/
-          page.tsx            # Storico letture — grafico per ogni giorno del range
-        actions.ts            # Server Actions: update, delete device, sensori
+          page.tsx            # Reading history: one chart for each day in the range
+        actions.ts            # Server Actions: update, delete device, sensors
       actions.ts              # Server Actions: create device
     rooms/
       page.tsx
@@ -73,21 +75,21 @@ app/
 
 components/
   layout/
-    Header.tsx                # Header desktop con navigazione
-    NavLink.tsx               # Link con stato attivo (use client)
-    AdminMenu.tsx             # Dropdown admin (use client)
-    MobileMenu.tsx            # Sheet navigazione mobile (use client)
-    ThemeToggle.tsx           # Toggle tema chiaro/scuro (use client)
+    Header.tsx                # Desktop header with navigation
+    NavLink.tsx               # Link with active state (use client)
+    AdminMenu.tsx             # Admin dropdown (use client)
+    MobileMenu.tsx            # Mobile navigation sheet (use client)
+    ThemeToggle.tsx           # Light/dark theme toggle (use client)
   dashboard/
-    RoomCard.tsx              # Card stanza con device annidati
-    DeviceCard.tsx            # Card device con badge stato e letture
+    RoomCard.tsx              # Room card with nested devices
+    DeviceCard.tsx            # Device card with status badge and readings
   devices/
-    DhtChart.tsx              # Grafico temperatura/umidità (use client)
-    EditDeviceForm.tsx        # Form modifica device (use client)
-    CreateDeviceForm.tsx      # Form creazione device (use client)
-    CreateDeviceDialog.tsx    # Dialog wrapper per creazione (use client)
-    AddSensorToDeviceForm.tsx # Form associazione sensore (use client)
-    HistoryRangePicker.tsx    # Selettore range date storico (use client)
+    DhtChart.tsx              # Temperature/humidity chart (use client)
+    EditDeviceForm.tsx        # Edit device form (use client)
+    CreateDeviceForm.tsx      # Create device form (use client)
+    CreateDeviceDialog.tsx    # Dialog wrapper for creation (use client)
+    AddSensorToDeviceForm.tsx # Sensor association form (use client)
+    HistoryRangePicker.tsx    # History date range picker (use client)
   rooms/
     RoomCardSimple.tsx
     CreateRoomForm.tsx
@@ -101,16 +103,16 @@ components/
   sensor_type/
     SensorTypeCard.tsx
   ui_personal/
-    DeleteButton.tsx          # Bottone elimina con AlertDialog conferma
-    CollapsibleForm.tsx       # Wrapper collassabile per form di modifica
-    AutoRefresh.tsx           # Refresh automatico pagina (use client)
+    DeleteButton.tsx          # Delete button with AlertDialog confirmation
+    CollapsibleForm.tsx       # Collapsible wrapper for edit forms
+    AutoRefresh.tsx           # Automatic page refresh (use client)
 
 lib/
   api/
-    api.ts                    # Wrapper fetch con validazione Zod
-  appConfig.ts                # Configurazione URL API
+    api.ts                    # Fetch wrapper with Zod validation
+  appConfig.ts                # API URL configuration
 
-schemas/                      # Schema Zod per ogni entità API
+schemas/                      # Zod schema for each API entity
   device.schema.ts
   device_type.schema.ts
   room.schema.ts
@@ -118,7 +120,7 @@ schemas/                      # Schema Zod per ogni entità API
   sensors_devices.schema.ts
   readings.schema.ts
 
-services/                     # Funzioni di accesso API per entità
+services/                     # API access functions for each entity
   device.ts
   device_type.ts
   room.ts
@@ -127,32 +129,32 @@ services/                     # Funzioni di accesso API per entità
   readings.ts
 
 types/
-  forms.ts                    # Tipo FormState condiviso tra le actions
-  dashboard.ts                # Tipo DeviceWithReading per la dashboard
+  forms.ts                    # FormState type shared between the actions
+  dashboard.ts                # DeviceWithReading type for the dashboard
 ```
 
 ---
 
-## Concetti chiave implementati
+## Key concepts implemented
 
 ### Server vs Client Components
 
-La distinzione fondamentale di Next.js App Router. I Server Components (default) girano sul server, accedono direttamente ai service e non inviano JavaScript al browser. I Client Components (`"use client"`) girano nel browser e gestiscono interattività.
+The basic distinction of the Next.js App Router. Server Components (the default) run on the server, access the services directly and send no JavaScript to the browser. Client Components (`"use client"`) run in the browser and handle interactivity.
 
-Regola applicata: tutto quello che mostra dati è Server Component. Solo i componenti con `onClick`, `useState`, hook o librerie browser-only sono Client Components.
+Rule applied: everything that displays data is a Server Component. Only components with `onClick`, `useState`, hooks or browser-only libraries are Client Components.
 
 ### Server Actions
 
-Le mutazioni (create, update, delete) usano Server Actions — funzioni `"use server"` chiamate dal browser ma eseguite sul server. Il pattern è:
+Mutations (create, update, delete) use Server Actions: `"use server"` functions that are called from the browser but run on the server. The pattern is:
 
-1. La action riceve `FormData` o argomenti espliciti
-2. Valida con Zod
-3. Chiama il service
-4. Chiama `revalidatePath` per aggiornare i dati o `redirect` per navigare
+1. The action receives `FormData` or explicit arguments
+2. It validates with Zod
+3. It calls the service
+4. It calls `revalidatePath` to refresh the data or `redirect` to navigate
 
-### Fetch parallelo
+### Parallel fetching
 
-Ogni pagina che ha bisogno di più dati usa `Promise.all` per lanciare tutte le chiamate in parallelo invece che in sequenza:
+Every page that needs more than one piece of data uses `Promise.all` to start all the calls in parallel instead of one after the other:
 
 ```ts
 const [device, sensors, rooms] = await Promise.all([
@@ -162,112 +164,120 @@ const [device, sensors, rooms] = await Promise.all([
 ]);
 ```
 
-### Validazione con Zod
+### Validation with Zod
 
-Ogni risposta API viene validata con lo schema Zod corrispondente. Se la risposta non corrisponde allo schema, la pagina va in errore invece di mostrare dati corrotti.
+Every API response is validated with the matching Zod schema. If the response does not match the schema, the page shows an error instead of displaying corrupted data.
 
 ### Auto-refresh
 
-Le pagine con dati in tempo reale (dashboard, device detail) includono il componente `AutoRefresh` che chiama `router.refresh()` periodicamente — ricarica i Server Components senza navigare.
+Pages with live data (dashboard, device detail) include the `AutoRefresh` component, which calls `router.refresh()` periodically. This reloads the Server Components without navigating.
 
 ---
 
-## Route disponibili
+## Available routes
 
-| Route | Descrizione |
-|---|---|
-| `/dashboard` | Overview con card per stanza e device |
-| `/devices` | Lista tutti i device con letture |
-| `/devices/[id]` | Dettaglio device, grafico giornaliero, gestione sensori |
-| `/devices/[id]/history` | Storico letture con range selector |
-| `/rooms` | Lista stanze |
-| `/rooms/[id]` | Dettaglio stanza |
-| `/admin/device-types` | Lista e creazione device type |
-| `/admin/device-types/[id]` | Dettaglio e modifica device type |
-| `/admin/sensor-types` | Lista sensor type |
-| `/admin/sensor-types/[id]` | Dettaglio sensor type e column schema |
+| Route                      | Description                                   |
+| -------------------------- | --------------------------------------------- |
+| `/dashboard`               | Overview with a card for each room and device |
+| `/devices`                 | Lists all devices with readings               |
+| `/devices/[id]`            | Device detail, daily chart, sensor management |
+| `/devices/[id]/history`    | Reading history with a range selector         |
+| `/rooms`                   | Room list                                     |
+| `/rooms/[id]`              | Room detail                                   |
+| `/admin/device-types`      | List and creation of device types             |
+| `/admin/device-types/[id]` | Device type detail and editing                |
+| `/admin/sensor-types`      | Sensor type list                              |
+| `/admin/sensor-types/[id]` | Sensor type detail and column schema          |
 
 ---
 
-## Configurazione
+## Configuration
 
-Copia `.env.example` in `.env.local` e imposta l'URL del backend:
+Copy `.env.example` to `.env.local` and set the backend URL:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3030
+API_URL=http://localhost:3030
 ```
 
-Per il deploy su Raspberry Pi con tutto lo stack in locale, l'URL punta all'indirizzo interno della rete.
+The variable is read on the server by `lib/appConfig.ts`; if it is not set, the default is `http://localhost:3030`.
+
+For a deployment on a Raspberry Pi with the whole stack running locally, the URL points to the internal network address (in the compose file of the full project: `API_URL=http://core:3030`).
+
+> **Note:** the frontend has no authentication: all pages, including the write and admin ones, are accessible to anyone who can reach the application. It is meant for use on a trusted local network.
 
 ---
 
-## Avvio in sviluppo
+## Running in development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Il frontend si aspetta `iot-nonna-core` in esecuzione sull'URL configurato.
+The frontend expects `iot-nonna-core` to be running at the configured URL.
+
+### docker-compose.yaml (local development only)
+
+The `docker-compose.yaml` in this repo is meant for local development only: it refers to files that are not in this repo (for example `configs/postgres/.env` and `configs/core/config.yaml`) and uses an `iot-nonna-frontend:1` image built locally. For the full deployment, use [iot-nonna-containers](https://github.com/Chiaf1/iot-nonna-containers).
 
 ---
 
-## Implementazioni future
+## Future work
 
-### Autenticazione
+### Authentication
 
-Al momento tutte le operazioni di lettura e scrittura sono accessibili senza autenticazione. Il piano prevede:
+At the moment all read and write operations are accessible without authentication. The plan is:
 
-- Lettura dati: pubblica, nessun login richiesto
-- Operazioni di scrittura (create, update, delete): protette da login
+- Reading data: public, no login required
+- Write operations (create, update, delete): protected by login
 
-L'implementazione consigliata è **NextAuth.js** (ora Auth.js), che si integra nativamente con Next.js App Router. Il flusso previsto:
+The recommended implementation is **NextAuth.js** (now Auth.js), which integrates natively with the Next.js App Router. The planned flow:
 
-1. Aggiungere un provider di autenticazione (credentials con utente singolo, o OAuth)
-2. Proteggere le Server Actions con un check della sessione prima di eseguire la mutazione
-3. Nascondere i bottoni di modifica/eliminazione nell'UI per gli utenti non autenticati
-4. Aggiungere un layout `(auth)/` separato per la pagina di login
+1. Add an authentication provider (credentials with a single user, or OAuth)
+2. Protect the Server Actions with a session check before running the mutation
+3. Hide the edit/delete buttons in the UI for unauthenticated users
+4. Add a separate `(auth)/` layout for the login page
 
 ```ts
-// Pattern da applicare nelle Server Actions
+// Pattern to apply in the Server Actions
 import { auth } from "@/lib/auth";
 
 export async function deleteDeviceAction(id: string) {
   const session = await auth();
-  if (!session) throw new Error("Non autorizzato");
+  if (!session) throw new Error("Not autorized");
   // ...
 }
 ```
 
-### Form creazione e modifica sensor-type
+### Create and edit forms for sensor-type
 
-Il `SensorType` ha una struttura complessa — `column_schema` è un oggetto con un numero variabile di chiavi, ognuna con `column` e `type`. Questo richiede un form dinamico dove l'utente può aggiungere e rimuovere campi.
+`SensorType` has a complex structure: `column_schema` is an object with a variable number of keys, each with `column` and `type`. This needs a dynamic form where the user can add and remove fields.
 
-L'implementazione prevede:
+The planned implementation:
 
-- `useState` per tenere un array di righe `{ key: string, column: string, type: string }`
-- Un bottone "aggiungi campo" che appende una riga vuota all'array
-- Un bottone "rimuovi" per ogni riga
-- Al submit, costruire il JSON `column_schema` dall'array e inviarlo alla action
+- `useState` to hold an array of rows `{ key: string, column: string, type: string }`
+- An "add field" button that appends an empty row to the array
+- A "remove" button for each row
+- On submit, build the `column_schema` JSON from the array and send it to the action
 
-La difficoltà principale è che questo form non può usare `FormData` in modo semplice per strutture annidate — richiederà di serializzare manualmente i dati e passarli come campo hidden JSON, oppure usare `useActionState` con una action che riceve un oggetto invece di `FormData`.
+The main difficulty is that this form cannot easily use `FormData` for nested structures. It will need to serialize the data manually and pass it as a hidden JSON field, or use `useActionState` with an action that receives an object instead of `FormData`.
 
-La pagina `/admin/sensor-types/[id]` mostra già il `column_schema` in sola lettura — per ora i sensor type si gestiscono direttamente via API o Swagger UI di `iot-nonna-core`.
+The `/admin/sensor-types/[id]` page already shows the `column_schema` read-only. For now, sensor types are managed directly through the API or the Swagger UI of `iot-nonna-core`.
 
-### Gestione riscaldamento nelle stanze (iot-nonna-control)
+### Room heating management (iot-nonna-control)
 
-Il sistema prevede in futuro un modulo `iot-nonna-control` per la gestione automatica del riscaldamento. Lato frontend questo si tradurrebbe in:
+The system plans a future `iot-nonna-control` module for automatic heating management. On the frontend this would mean:
 
-- **Dashboard stanza** (`/rooms/[id]`) arricchita con: temperatura target impostabile, stato caldaia (on/off), programma orario settimanale
-- **Widget riscaldamento** nella dashboard principale — temperatura attuale vs target per ogni stanza
-- **Grafici comparativi** — temperatura misurata vs temperatura target nel tempo, per valutare l'efficienza del sistema
-- **Pagina programma** — interfaccia settimanale per configurare gli orari di accensione per ogni stanza
+- **Room dashboard** (`/rooms/[id]`) extended with: settable target temperature, boiler state (on/off), weekly schedule
+- **Heating widget** on the main dashboard: current vs target temperature for each room
+- **Comparison charts**: measured vs target temperature over time, to evaluate how efficient the system is
+- **Schedule page**: a weekly interface to set the on/off times for each room
 
-Il frontend consumerà le nuove API REST esposte da `iot-nonna-control` con lo stesso pattern già in uso — service, schema Zod, Server Components per la lettura, Server Actions per la scrittura.
+The frontend will consume the new REST APIs exposed by `iot-nonna-control` with the same pattern already in use: service, Zod schema, Server Components for reading, Server Actions for writing.
 
-### Altre possibili aggiunte
+### Other possible additions
 
-- **Notifiche** — alert quando un device va offline o una lettura supera una soglia
-- **Export dati** — download CSV delle letture in un range selezionato
-- **Confronto device** — grafico che sovrappone le letture di più device sulla stessa scala temporale
-- **Mappa stanze** — layout grafico della casa con le stanze e i device posizionati visivamente
+- **Notifications**: alert when a device goes offline or a reading goes over a threshold
+- **Data export**: CSV download of the readings in a selected range
+- **Device comparison**: a chart that overlays the readings of several devices on the same time axis
+- **Room map**: a graphical layout of the house with rooms and devices placed visually

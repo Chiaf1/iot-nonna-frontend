@@ -98,7 +98,7 @@ components/
   device_type/
     DeviceTypeCard.tsx
     CreateDeviceTypeForm.tsx
-    CreateDeviceTypeDialog.tsx
+    CreateDevicetypeDialog.tsx
     EditDeviceTypeForm.tsx
   sensor_type/
     SensorTypeCard.tsx
@@ -141,7 +141,7 @@ types/
 
 The basic distinction of the Next.js App Router. Server Components (the default) run on the server, access the services directly and send no JavaScript to the browser. Client Components (`"use client"`) run in the browser and handle interactivity.
 
-Rule applied: everything that displays data is a Server Component. Only components with `onClick`, `useState`, hooks or browser-only libraries are Client Components.
+Rule applied: pages and layouts are Server Components, and pages fetch data through the services. Cards such as `DeviceCard` and `RoomCard` render that data on the server. Client Components handle forms, dialogs, navigation, auto-refresh and charts, and can also display data passed from the server: `DhtChart` renders readings, while `CreateDeviceForm` renders device type and room options. `DevicesPageClient` coordinates the creation dialog and auto-refresh using the device types and rooms fetched by the page; the device list itself is rendered by the Server Component page.
 
 ### Server Actions
 

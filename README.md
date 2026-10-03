@@ -53,25 +53,28 @@ app/
         page.tsx              # Device detail: readings, sensors, daily chart
         history/
           page.tsx            # Reading history: one chart for each day in the range
-        actions.ts            # Server Actions: update, delete device, sensors
+        actions.ts            # Server Actions: update, delete device, add/remove sensors
       actions.ts              # Server Actions: create device
     rooms/
       page.tsx
+      actions.ts              # Server Actions: create room
       [id]/
         page.tsx
-        actions.ts
+        actions.ts            # Server Actions: update, delete room
     admin/
       device-types/
         page.tsx
         [id]/
           page.tsx
-          actions.ts
-        actions.ts
+          actions.ts          # Server Actions: update, delete device type
+        actions.ts            # Server Actions: create device type
       sensor-types/
         page.tsx
+        actions.ts            # Server Action: create sensor type (not wired to the UI yet)
         [id]/
           page.tsx
-          actions.ts
+          actions.ts          # Server Action: delete sensor type
+  api/                        # Route handlers: JSON endpoints for devices, rooms and dashboard
 
 components/
   layout/
@@ -88,10 +91,13 @@ components/
     EditDeviceForm.tsx        # Edit device form (use client)
     CreateDeviceForm.tsx      # Create device form (use client)
     CreateDeviceDialog.tsx    # Dialog wrapper for creation (use client)
+    DevicesPageClient.tsx     # Creation dialog + auto-refresh for the device list (use client)
+    RemoveSensorButton.tsx    # Remove a sensor from a device (use client)
     AddSensorToDeviceForm.tsx # Sensor association form (use client)
     HistoryRangePicker.tsx    # History date range picker (use client)
   rooms/
     RoomCardSimple.tsx
+    RoomsPageClient.tsx       # Creation dialog for the room list (use client)
     CreateRoomForm.tsx
     CreateRoomDialog.tsx
     EditRoomForm.tsx
@@ -99,9 +105,11 @@ components/
     DeviceTypeCard.tsx
     CreateDeviceTypeForm.tsx
     CreateDevicetypeDialog.tsx
+    DevicetypePageClient.tsx  # Creation dialog for the device type list (use client)
     EditDeviceTypeForm.tsx
   sensor_type/
     SensorTypeCard.tsx
+    CreateSesnorTypeForm.tsx  # Create form, not used by any page yet
   ui_personal/
     DeleteButton.tsx          # Delete button with AlertDialog confirmation
     CollapsibleForm.tsx       # Collapsible wrapper for edit forms
@@ -150,27 +158,35 @@ Mutations (create, update, delete) use Server Actions: `"use server"` functions 
 1. The action receives `FormData` or explicit arguments
 2. It validates with Zod
 3. It calls the service
-4. It calls `revalidatePath` to refresh the data or `redirect` to navigate
+4. It calls `revalidatePath` to refresh the data or `redirect` to navigate (update and delete actions, add/remove sensor)
+
+The create actions for devices, rooms and device types do not call `revalidatePath`: it conflicted with the creation dialog. They return a success message and the client component calls `router.refresh()` once the dialog reports success. `createSensorTypeActions` calls `revalidatePath("/sensor-types")`, but it is not connected to any page yet.
 
 ### Parallel fetching
 
-Every page that needs more than one piece of data uses `Promise.all` to start all the calls in parallel instead of one after the other:
+When a page needs several independent pieces of data, it starts the calls together with `Promise.all` instead of awaiting them one after the other. Dependent calls stay sequential: on the device detail page, `getDevice` runs first (a missing device ends in `notFound()`), then the other calls run in parallel. On the dashboard and device list, the devices are fetched first, then the latest readings of each device are fetched in parallel.
 
 ```ts
-const [device, sensors, rooms] = await Promise.all([
-  getDevice(id),
-  getDeviceSensors(id),
+const [deviceSensors, rooms, allSensors] = await Promise.all([
+  getDeviceSensors(id).catch(() => null),
   getRooms(),
+  getSensorTypes(),
 ]);
 ```
 
+The other pages (rooms, room detail, device types, sensor types) make a single call.
+
 ### Validation with Zod
 
-Every API response is validated with the matching Zod schema. If the response does not match the schema, the page shows an error instead of displaying corrupted data.
+Every API response that returns data is parsed with the matching Zod schema, and requests are validated before they are sent. If a response does not match the schema, or the HTTP status is not OK, the fetch wrapper throws. What happens next depends on the page:
+
+- Where the error is not caught, it reaches the `error.tsx` boundary of the route. This covers the main calls on the dashboard, device list, room list, room detail, device type list and detail, and sensor type list and detail.
+- Where the call ends in `.catch(() => null)` or `.catch(() => [])`, the page renders without that data. This covers the latest readings on the dashboard and device list, the sensors and readings on the device detail, and the readings on the history page.
+- On the device detail and history pages, a failed `getDevice` (including a network or schema error, not only a 404) becomes `notFound()`.
 
 ### Auto-refresh
 
-Pages with live data (dashboard, device detail) include the `AutoRefresh` component, which calls `router.refresh()` periodically. This reloads the Server Components without navigating.
+Pages with live data (dashboard, device list, device detail) include the `AutoRefresh` component, which calls `router.refresh()` periodically. This reloads the Server Components without navigating.
 
 ---
 
@@ -187,7 +203,7 @@ Pages with live data (dashboard, device detail) include the `AutoRefresh` compon
 | `/admin/device-types`      | List and creation of device types             |
 | `/admin/device-types/[id]` | Device type detail and editing                |
 | `/admin/sensor-types`      | Sensor type list                              |
-| `/admin/sensor-types/[id]` | Sensor type detail and column schema          |
+| `/admin/sensor-types/[id]` | Sensor type detail, column schema, delete     |
 
 ---
 
@@ -244,7 +260,7 @@ import { auth } from "@/lib/auth";
 
 export async function deleteDeviceAction(id: string) {
   const session = await auth();
-  if (!session) throw new Error("Not autorized");
+  if (!session) throw new Error("Not authorized");
   // ...
 }
 ```
@@ -262,7 +278,7 @@ The planned implementation:
 
 The main difficulty is that this form cannot easily use `FormData` for nested structures. It will need to serialize the data manually and pass it as a hidden JSON field, or use `useActionState` with an action that receives an object instead of `FormData`.
 
-The `/admin/sensor-types/[id]` page already shows the `column_schema` read-only. For now, sensor types are managed directly through the API or the Swagger UI of `iot-nonna-core`.
+The `/admin/sensor-types/[id]` page already shows the `column_schema` read-only. The UI can list sensor types, show their detail and delete them. Creating them goes through the API or the Swagger UI of `iot-nonna-core`; editing is not implemented in the UI. A create form component and a create Server Action exist in the code, but no page uses them yet.
 
 ### Room heating management (iot-nonna-control)
 
